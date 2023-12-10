@@ -1,0 +1,10 @@
+plugins {
+    id 'application'
+}
+
+group = 'io.github.jwharm.puzzlegame'
+version = '0.1'
+
+application {
+    mainClass = 'io.github.jwharm.Main'
+}
