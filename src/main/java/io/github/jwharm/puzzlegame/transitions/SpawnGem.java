@@ -1,32 +1,29 @@
 package io.github.jwharm.puzzlegame.transitions;
 
-import io.github.jwharm.puzzlegame.*;
+import io.github.jwharm.puzzlegame.engine.*;
 
 public class SpawnGem implements Transition {
 
-    private static final int DONE = 6;
+    private static final int DONE = 6, DELAY = 2;
 
-    private final int row, col;
+    private final float row, col;
     private int progress = 0;
 
-    public SpawnGem(int row, int col) {
-        this.row = row;
-        this.col = col;
+    public SpawnGem(Position position) {
+        this.row = position.row();
+        this.col = position.col();
     }
 
     @Override
-    public int interval() {
-        return 15;
-    }
+    public Result run(Game game) {
+        if (game.tick() % DELAY != 0) return Result.CONTINUE;
 
-    @Override
-    public Result update(Game game) {
         progress++;
-        game.draw(col * Game.TILE_SIZE, row * Game.TILE_SIZE, "gem" + (progress % 2) + ".png");
+        game.draw(row, col, "gem" + (progress % 2) + ".png");
 
         if (progress < DONE) return Result.CONTINUE;
 
-        game.board().set(row, col, new Tile(ActorType.GEM, false));
+        game.board().set((int) row, (int) col, new Tile(ActorType.GEM, TileState.PASSIVE));
         return Result.DONE;
     }
 }

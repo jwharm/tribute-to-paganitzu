@@ -1,4 +1,4 @@
-package io.github.jwharm.puzzlegame;
+package io.github.jwharm.puzzlegame.engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ public final class Board {
         return tiles[row][col];
     }
 
-    public Tile get(Point point) {
-        return tiles[point.y()][point.x()];
+    public Tile get(Position pos) {
+        return tiles[(int) pos.row()][(int) pos.col()];
     }
 
     public List<Tile> getAll(ActorType type) {
@@ -48,6 +48,27 @@ public final class Board {
     public Board() {
         for (int row = 0; row < HEIGHT; row++)
             for (int col = 0; col < WIDTH; col++)
-                tiles[row][col] = new Tile(ActorType.EMPTY, false);
+                set(row, col, new Tile(ActorType.EMPTY, TileState.PASSIVE));
+    }
+
+    public Board(String definition) {
+        var layout = definition.lines().toList();
+        for (int row = 0; row < layout.size(); row++) {
+            for (int col = 0; col < layout.get(row).length(); col++) {
+                var id = layout.get(row).charAt(col);
+                set(row, col, switch(id) {
+                    case ' ' -> new Tile(ActorType.EMPTY, TileState.PASSIVE);
+                    case '=' -> new Tile(ActorType.WALL, TileState.PASSIVE);
+                    case '~' -> new Tile(ActorType.WATER, TileState.ACTIVE);
+                    case '*' -> new Tile(ActorType.SPIDER, TileState.ACTIVE);
+                    case 'P' -> new Tile(ActorType.PLAYER, TileState.PASSIVE);
+                    default -> throw new IllegalStateException("Unexpected value: " + id);
+                });
+            }
+        }
+    }
+
+    public Game newGame() {
+        return new Game(this);
     }
 }

@@ -1,4 +1,4 @@
-package io.github.jwharm.puzzlegame;
+package io.github.jwharm.puzzlegame.engine;
 
 public enum Result {
     CONTINUE,

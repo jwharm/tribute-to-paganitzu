@@ -5,21 +5,21 @@ import io.github.jwharm.puzzlegame.engine.Result;
 import io.github.jwharm.puzzlegame.engine.Tile;
 import io.github.jwharm.puzzlegame.engine.Transition;
 
-public class WaterFlow implements Transition {
+public class DoorUnlocked implements Transition {
 
-    private static final int DELAY = 2;
-    private final Tile tile;
+    private static final int DELAY = 15;
+    private final Tile door;
     private int state = 0;
 
-    public WaterFlow(Tile tile) {
-        this.tile = tile;
+    public DoorUnlocked(Tile door) {
+        this.door = door;
     }
 
     @Override
     public Result run(Game game) {
         if (game.tick() % DELAY == 0)
             if (state == 0) state = 1; else state = 0;
-        game.draw(tile.row(), tile.col(), "water" + state + ".png");
+        if (state == 1) game.draw(door.row(), door.col(), "unlocked.png");
         return Result.CONTINUE;
     }
 }
