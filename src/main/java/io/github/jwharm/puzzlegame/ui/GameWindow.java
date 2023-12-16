@@ -41,19 +41,17 @@ public class GameWindow extends ApplicationWindow {
         controller.onKeyPressed((keyVal, _, _) -> keyPressed(keyVal));
         this.addController(controller);
         this.onCloseRequest(() -> {
-            ((Application) this.getProperty("application")).quit();
+            this.getApplication().quit();
             return true;
         });
 
-        paintable = GamePaintable.create();
-
-        var picture = Picture.builder()
+        this.paintable = GamePaintable.create();
+        Picture picture = Picture.builder()
                 .setPaintable(paintable)
                 .setHexpand(true)
                 .setVexpand(true)
                 .setContentFit(ContentFit.CONTAIN)
                 .build();
-
         this.setContent(picture);
     }
 

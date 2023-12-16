@@ -46,17 +46,20 @@ public class GameApplication extends Application {
     @Override
     public void activate() {
         Window win = this.getActiveWindow();
-        if (win == null) {
-            win = GameWindow.create(this);
-            GameWindow gameWindow = (GameWindow) win;
-            var game = stub();
-            gameWindow.setGame(game);
-            GLib.timeoutAdd(1000 / FPS, () -> {
-                updateGameState(gameWindow);
-                return true;
-            });
-        }
+        if (win == null)
+            win = createWindow();
         win.present();
+    }
+
+    private GameWindow createWindow() {
+        GameWindow win = GameWindow.create(this);
+        var game = stub();
+        win.setGame(game);
+        GLib.timeoutAdd(1000 / FPS, () -> {
+            updateGameState(win);
+            return true;
+        });
+        return win;
     }
 
     private void updateGameState(GameWindow win) {
