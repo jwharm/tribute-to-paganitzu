@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class Tile {
 
+    public static final Tile OUT_OF_BOUNDS = new Tile(ActorType.OUT_OF_BOUNDS, TileState.PASSIVE);
+
     private final ActorType type;
     private int row, col;
     private TileState state;

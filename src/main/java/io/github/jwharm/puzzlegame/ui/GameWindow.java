@@ -3,12 +3,14 @@ package io.github.jwharm.puzzlegame.ui;
 import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gobject.types.Types;
 import io.github.jwharm.puzzlegame.engine.*;
-import io.github.jwharm.puzzlegame.transitions.PlayerMove;
+import org.gnome.adw.Application;
+import org.gnome.adw.ApplicationWindow;
 import org.gnome.gdk.Gdk;
-import org.gnome.gdk.ModifierType;
 import org.gnome.glib.Type;
 import org.gnome.gobject.GObject;
-import org.gnome.gtk.*;
+import org.gnome.gtk.ContentFit;
+import org.gnome.gtk.EventControllerKey;
+import org.gnome.gtk.Picture;
 
 import java.lang.foreign.MemorySegment;
 
@@ -36,7 +38,7 @@ public class GameWindow extends ApplicationWindow {
     @InstanceInit
     public void init() {
         var controller = new EventControllerKey();
-        controller.onKeyPressed(this::keyPressed);
+        controller.onKeyPressed((keyVal, _, _) -> keyPressed(keyVal));
         this.addController(controller);
         this.onCloseRequest(() -> {
             ((Application) this.getProperty("application")).quit();
@@ -52,12 +54,7 @@ public class GameWindow extends ApplicationWindow {
                 .setContentFit(ContentFit.CONTAIN)
                 .build();
 
-//        var img = Image.builder()
-//                .setPaintable(paintable)
-//                .setHexpand(true)
-//                .setVexpand(true)
-//                .build();
-        this.setChild(picture);
+        this.setContent(picture);
     }
 
     public void invalidateContents() {
@@ -72,23 +69,15 @@ public class GameWindow extends ApplicationWindow {
         return paintable.game();
     }
 
-    public boolean keyPressed(int keyval, int keycode, ModifierType state) {
-        String key = Gdk.keyvalName(keyval);
-        if (key != null) switch(key) {
-            case "Left", "Right", "Up", "Down" -> move(Direction.valueOf(key.toUpperCase()));
+    public boolean keyPressed(int keyVal) {
+        if (game().paused()) return true;
+        switch(keyVal) {
+            case Gdk.KEY_Left -> game().move(Direction.LEFT);
+            case Gdk.KEY_Up -> game().move(Direction.UP);
+            case Gdk.KEY_Right -> game().move(Direction.RIGHT);
+            case Gdk.KEY_Down -> game().move(Direction.DOWN);
+            default -> {}
         }
         return true;
-    }
-
-    private void move(Direction direction) {
-        Board board = paintable.game().board();
-        Tile player = board.getAny(ActorType.PLAYER);
-        if (player == null) throw new IllegalStateException("No player");
-
-        if (player.state() == TileState.ACTIVE) return;
-
-        Tile target = board.get(player.position().move(direction));
-        if (target.type() == ActorType.EMPTY)
-            paintable.game().schedule(new PlayerMove(player, target, direction));
     }
 }

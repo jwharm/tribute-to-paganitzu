@@ -2,10 +2,10 @@ package io.github.jwharm.puzzlegame.engine;
 
 public enum Direction {
     // in clockwise order:
+    LEFT,
     UP,
     RIGHT,
-    DOWN,
-    LEFT;
+    DOWN;
 
     public Direction next(boolean clockwise) {
         return clockwise

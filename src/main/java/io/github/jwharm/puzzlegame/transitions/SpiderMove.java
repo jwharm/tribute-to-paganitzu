@@ -6,40 +6,47 @@ public class SpiderMove implements Transition {
 
     private final boolean clockwise;
     private final Direction direction;
-    private final Tile spider, target;
+    private final Tile spider;
     private float progress = 0;
 
-    public SpiderMove(Tile spider, Tile target, Direction direction) {
+    public SpiderMove(Tile spider, Direction direction) {
         this.spider = spider;
-        this.target = target;
         this.clockwise = !"false".equals(spider.getProperty("clockwise")); // default true
         this.direction = direction;
     }
 
     @Override
     public Result run(Game game) {
-        game.draw(spider.position(), "empty.png");
-        game.draw(target.position(), "empty.png");
+        if (game.paused()) return Result.CONTINUE;
+
         progress += 0.5f;
         Position current = new Position(spider.row(), spider.col());
         if (progress < 1) {
             game.draw(current.move(direction, progress), "spider.png");
-            game.board().swap(spider, target);
+            game.board().swap(spider, game.board().get(spider.position().move(direction)));
             return Result.CONTINUE;
         } else {
             game.draw(current, "spider.png");
-            scheduleNextMove(game);
+            if (!bite(game))
+                scheduleNextMove(game);
             return Result.DONE;
         }
+    }
+
+    private boolean bite(Game game) {
+        if (spider.position().borders(game.board().player().position())) {
+            game.schedule(new Die());
+            return true;
+        }
+        return false;
     }
 
     private void scheduleNextMove(Game game) {
         Position current = new Position(spider.row(), spider.col());
         Direction next = direction.next(clockwise);
         do {
-            Tile target = game.board().get(current.move(next));
-            if (target.type() == ActorType.EMPTY) {
-                game.schedule(new SpiderMove(spider, target, next));
+            if (game.board().get(current.move(next)).type() == ActorType.EMPTY) {
+                game.schedule(new SpiderMove(spider, next));
                 return;
             }
             next = next.next(!clockwise);

@@ -1,25 +1,25 @@
 package io.github.jwharm.puzzlegame.transitions;
 
-import io.github.jwharm.puzzlegame.engine.Game;
-import io.github.jwharm.puzzlegame.engine.Result;
-import io.github.jwharm.puzzlegame.engine.Tile;
-import io.github.jwharm.puzzlegame.engine.Transition;
+import io.github.jwharm.puzzlegame.engine.*;
 
 public class DoorUnlocked implements Transition {
 
-    private static final int DELAY = 15;
-    private final Tile door;
-    private int state = 0;
+    private static final int DONE = 5, DELAY = 2;
 
-    public DoorUnlocked(Tile door) {
-        this.door = door;
+    private final float row, col;
+    private int progress = 0;
+
+    public DoorUnlocked(Position position) {
+        this.row = position.row();
+        this.col = position.col();
     }
 
     @Override
     public Result run(Game game) {
-        if (game.tick() % DELAY == 0)
-            if (state == 0) state = 1; else state = 0;
-        if (state == 1) game.draw(door.row(), door.col(), "unlocked.png");
-        return Result.CONTINUE;
+        game.draw(row, col, progress % 2 == 0 ? "door_unlocked.png": "door_locked.png");
+        if (game.ticks() % DELAY != 0) return Result.CONTINUE;
+        if (++progress < DONE) return Result.CONTINUE;
+        game.board().set((int) row, (int) col, new Tile(ActorType.DOOR_UNLOCKED, TileState.PASSIVE));
+        return Result.DONE;
     }
 }

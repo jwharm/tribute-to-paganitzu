@@ -16,7 +16,7 @@ public class SpawnGem implements Transition {
 
     @Override
     public Result run(Game game) {
-        if (game.tick() % DELAY != 0) return Result.CONTINUE;
+        if (game.ticks() % DELAY != 0) return Result.CONTINUE;
 
         progress++;
         game.draw(row, col, "gem" + (progress % 2) + ".png");

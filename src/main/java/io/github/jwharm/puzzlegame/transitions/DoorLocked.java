@@ -9,9 +9,8 @@ public class DoorLocked implements Transition {
     private final List<Position> keyLocations;
     private final Tile door;
 
-    public DoorLocked(Tile door, Game game) {
+    public DoorLocked(Tile door, List<Tile> keys) {
         this.door = door;
-        var keys = game.board().getAll(ActorType.KEY);
         keyLocations = keys.stream().map(k -> new Position(k.row(), k.col())).toList();
     }
 
@@ -20,8 +19,8 @@ public class DoorLocked implements Transition {
         for (var position : keyLocations)
             if (game.board().get(position).type() == ActorType.KEY)
                 return Result.CONTINUE;
-        door.setProperty("unlocked", "true");
-        game.schedule(new DoorUnlocked(door));
+        game.board().replace(door, new Tile(ActorType.DOOR_UNLOCKED, TileState.ACTIVE));
+        game.schedule(new DoorUnlocked(door.position()));
         return Result.DONE;
     }
 }

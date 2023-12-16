@@ -4,12 +4,13 @@ import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gobject.types.Types;
 import io.github.jwharm.puzzlegame.engine.Board;
 import io.github.jwharm.puzzlegame.engine.Game;
+import io.github.jwharm.puzzlegame.engine.GameState;
 import org.gnome.gio.ApplicationFlags;
 import org.gnome.gio.SimpleAction;
 import org.gnome.glib.GLib;
 import org.gnome.glib.Type;
 import org.gnome.gobject.GObject;
-import org.gnome.gtk.Application;
+import org.gnome.adw.Application;
 import org.gnome.gtk.Window;
 
 import java.lang.foreign.MemorySegment;
@@ -37,7 +38,7 @@ public class GameApplication extends Application {
     @InstanceInit
     public void init() {
         var quit = new SimpleAction("quit", null);
-        quit.onActivate($ -> quit());
+        quit.onActivate(_ -> quit());
         addAction(quit);
         setAccelsForAction("app.quit", new String[]{"<primary>q"});
     }
@@ -50,32 +51,34 @@ public class GameApplication extends Application {
             GameWindow gameWindow = (GameWindow) win;
             var game = stub();
             gameWindow.setGame(game);
-            GLib.timeoutAdd(1000 / FPS, () -> advance(gameWindow));
+            GLib.timeoutAdd(1000 / FPS, () -> {
+                updateGameState(gameWindow);
+                return true;
+            });
         }
         win.present();
     }
 
-    private boolean advance(GameWindow win) {
-        win.game().advance();
+    private void updateGameState(GameWindow win) {
+        win.game().updateState();
         win.invalidateContents();
-        return true;
     }
 
     private Game stub() {
         Board level1 = new Board("""
-                ================
-                =  P        ~~~=
-                =           ~~~=
-                =    = =       =
-                =    = =*      =
-                =    = =       =
-                =    ===       =
-                =    =         =
-                =    =         =
+                ==P=============
+                == ==== ~~======
+                == ==== ~~======
+                =       ::======
+                =       ::   GG=
+                = o=========K===
+                =     2======= =
+                = ==============
+                = ==============
                 =              =
-                =              =
-                ================
+                ====K       GGG=
+                =======D========
                 """);
-        return new Game(level1);
+        return new Game(level1, new GameState());
     }
 }
