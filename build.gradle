@@ -10,7 +10,11 @@ repositories {
     mavenCentral()
 }
 
-idea.module.downloadSources = true
+idea {
+    module {
+        downloadSources = true
+    }
+}
 
 dependencies {
     implementation 'io.github.jwharm.javagi:adw:0.8.1'
@@ -23,13 +27,13 @@ java {
     }
 }
 
-tasks.named('compileJava') {
-    options.compilerArgs += "--enable-preview"
+tasks.named('compileJava', JavaCompile) {
+    options.compilerArgs += '--enable-preview'
 }
 
-tasks.named('run') {
-    jvmArgs += "--enable-preview"
-    jvmArgs += "--enable-native-access=ALL-UNNAMED"
+tasks.named('run', JavaExec) {
+    jvmArgs += '--enable-preview'
+    jvmArgs += '--enable-native-access=ALL-UNNAMED'
 }
 
 application {
