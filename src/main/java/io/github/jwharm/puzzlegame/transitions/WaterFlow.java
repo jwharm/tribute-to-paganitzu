@@ -19,7 +19,7 @@ public class WaterFlow implements Transition {
     public Result run(Game game) {
         if (game.ticks() % DELAY == 0)
             if (state == 0) state = 1; else state = 0;
-        game.draw(tile.row(), tile.col(), "water" + state + ".png");
+        game.draw(tile.row(), tile.col(), tile.tileRef());
         return Result.CONTINUE;
     }
 }

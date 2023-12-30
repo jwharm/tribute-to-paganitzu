@@ -16,10 +16,10 @@ public class DoorUnlocked implements Transition {
 
     @Override
     public Result run(Game game) {
-        game.draw(row, col, progress % 2 == 0 ? "door_unlocked.png": "door_locked.png");
+        game.draw(row, col, progress % 2 == 0 ? "0037": "0039");
         if (game.ticks() % DELAY != 0) return Result.CONTINUE;
         if (++progress < DONE) return Result.CONTINUE;
-        game.board().set((int) row, (int) col, new Tile(ActorType.DOOR_UNLOCKED, TileState.PASSIVE));
+        game.board().set((int) row, (int) col, new Tile(ActorType.DOOR_UNLOCKED, TileState.PASSIVE, "0037"));
         return Result.DONE;
     }
 }

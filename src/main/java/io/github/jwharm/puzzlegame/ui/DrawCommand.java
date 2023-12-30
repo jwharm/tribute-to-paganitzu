@@ -1,4 +1,7 @@
 package io.github.jwharm.puzzlegame.ui;
 
-public record DrawCommand(float row, float col, String file) {
+import org.freedesktop.cairo.Context;
+
+public interface DrawCommand {
+    void draw(Context cr);
 }

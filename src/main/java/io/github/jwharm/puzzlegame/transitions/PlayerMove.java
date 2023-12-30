@@ -20,11 +20,12 @@ public class PlayerMove implements Transition {
         progress += 0.5f;
         Position current = new Position(player.row(), player.col());
         if (progress < 1) {
-            game.draw(current.move(direction, progress), "player.png");
+            game.draw(current, "0017");
+            game.draw(current.move(direction, progress), "0004");
             game.board().swap(player, target);
             return Result.CONTINUE;
         } else {
-            game.draw(current, "player.png");
+            game.draw(current, "0004");
             player.setState(TileState.PASSIVE);
             return Result.DONE;
         }

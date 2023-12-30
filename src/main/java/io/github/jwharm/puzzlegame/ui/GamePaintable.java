@@ -16,71 +16,40 @@ import java.lang.foreign.MemorySegment;
 
 public class GamePaintable extends GObject implements Paintable {
 
-    public GamePaintable(MemorySegment address) {
-        super(address);
-    }
-
+    public static final int TILE_SIZE = 8;
     private static final Type gtype = Types.register(GamePaintable.class);
+    private Game game;
 
     public static Type getType() {
         return gtype;
     }
 
-    private Game game;
+    public GamePaintable(MemorySegment address) {
+        super(address);
+    }
 
-    private float calculateTileSize(float width, float height) {
-        float boardRatio = (float)Board.HEIGHT / (float)Board.WIDTH;
-        float windowRatio = height / width;
-        float tileSize = (windowRatio < boardRatio) ? (height / (float) Board.HEIGHT) : (width / (float) Board.WIDTH);
-        return (float) Math.floor(tileSize);
+    private float calculateScaleFactor(float width, float height) {
+        float w = width / Board.WIDTH / TILE_SIZE;
+        float h = height / Board.HEIGHT / TILE_SIZE;
+        return Math.min(w, h);
     }
 
     @Override
     public void snapshot(org.gnome.gdk.Snapshot gdkSnapshot, double width, double height) {
         if (game == null) return;
         try (var arena = Arena.ofConfined()) {
-            float tileSize = calculateTileSize((float) width, (float) height);
+            float scaling = calculateScaleFactor((float) width, (float) height);
 
             Snapshot snapshot = (Snapshot) gdkSnapshot;
-            Context ctx = snapshot.appendCairo(Rect.allocate(arena).init(0, 0, (float) width, (float) height));
-            ctx.setSourceRGBA(0.0f, 0.0f, 0.0f, 1.0f)
-               .rectangle(0, 0, (float) width, (float) height)
-               .fill();
+            Context cr = snapshot.appendCairo(Rect.allocate(arena).init(0, 0, (float) width, (float) height));
+            cr.setSourceRGBA(0.0f, 0.0f, 0.0f, 1.0f)
+              .rectangle(0, 0, (float) width, (float) height)
+              .fill();
+
+            cr.scale(scaling, scaling);
 
             for (var cmd : game.drawCommands()) {
-                if (cmd.file().toLowerCase().startsWith("empty"))
-                    ctx.setSourceRGBA(0.0f, 0.0f, 0.0f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("door_locked"))
-                    ctx.setSourceRGBA(0.4f, 0.2f, 0.2f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("door_unlocked"))
-                    ctx.setSourceRGBA(0.8f, 0.8f, 8.0f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("gem"))
-                    ctx.setSourceRGBA(0.5f, 0.5f, 1.0f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("player"))
-                    ctx.setSourceRGBA(1.0f, 1.0f, 1.0f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("key"))
-                    ctx.setSourceRGBA(1.0f, 1.0f, 0.0f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("wall"))
-                    ctx.setSourceRGBA(0.6f, 0.3f, 0.3f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("mud"))
-                    ctx.setSourceRGBA(0.2f, 0.1f, 0.1f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("spider"))
-                    ctx.setSourceRGBA(1.0f, 0.0f, 0.0f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("venom"))
-                    ctx.setSourceRGBA(1.0f, 1.0f, 0.0f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("water0"))
-                    ctx.setSourceRGBA(0.0f, 0.0f, 1.0f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("water1"))
-                    ctx.setSourceRGBA(0.1f, 0.1f, 0.8f, 1.0f);
-                else if (cmd.file().toLowerCase().startsWith("boulder"))
-                    ctx.setSourceRGBA(0.6f, 0.3f, 0.3f, 1.0f);
-                else
-                    ctx.setSourceRGBA(0.0f, 1.0f, 0.0f, 1.0f);
-
-                if (cmd.file().toLowerCase().startsWith("boulder"))
-                    ctx.arc(cmd.col() * tileSize + (tileSize/2), cmd.row() * tileSize + (tileSize/2), tileSize/2, 0.0, 2.0 * Math.PI).fill();
-                else
-                    ctx.rectangle(cmd.col() * tileSize, cmd.row() * tileSize, tileSize, tileSize).fill();
+                cmd.draw(cr);
             }
             game.drawCommands().clear();
         }

@@ -24,7 +24,7 @@ public class SnakeGuard implements Transition {
             default -> direction;
             case +1 -> Direction.RIGHT;
         };
-        game.draw(snake.row(), snake.col(), "snake" + direction + (progress = (progress + 1) % 4) + ".png");
+        game.draw(snake.row(), snake.col(), "0020");
 
         // If not on same row, or something blocks the view, continue
         if (player.row() != snake.row()) return Result.CONTINUE;

@@ -34,6 +34,7 @@ tasks.named('compileJava', JavaCompile) {
 tasks.named('run', JavaExec) {
     jvmArgs += '--enable-preview'
     jvmArgs += '--enable-native-access=ALL-UNNAMED'
+    jvmArgs += '-Djava.library.path=C:/dev/msys64/mingw64/bin'
 }
 
 application {

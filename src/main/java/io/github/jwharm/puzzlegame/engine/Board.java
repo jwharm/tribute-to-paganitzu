@@ -50,27 +50,4 @@ public final class Board {
     public void replace(Tile tile1, Tile tile2) {
         set(tile1.row(), tile1.col(), tile2);
     }
-
-    public Board(String definition) {
-        var layout = definition.lines().toList();
-        for (int row = 0; row < layout.size(); row++) {
-            for (int col = 0; col < layout.get(row).length(); col++) {
-                var id = layout.get(row).charAt(col);
-                set(row, col, switch(id) {
-                    case ' ' -> new Tile(ActorType.EMPTY, TileState.PASSIVE);
-                    case '=' -> new Tile(ActorType.WALL, TileState.PASSIVE);
-                    case '~' -> new Tile(ActorType.WATER, TileState.ACTIVE);
-                    case ':' -> new Tile(ActorType.MUD, TileState.PASSIVE);
-                    case 'o' -> new Tile(ActorType.BOULDER, TileState.PASSIVE);
-                    case '*' -> new Tile(ActorType.SPIDER, TileState.ACTIVE);
-                    case '2' -> new Tile(ActorType.SNAKE, TileState.ACTIVE);
-                    case 'P' -> new Tile(ActorType.PLAYER, TileState.PASSIVE);
-                    case 'K' -> new Tile(ActorType.KEY, TileState.PASSIVE);
-                    case 'G' -> new Tile(ActorType.GEM, TileState.PASSIVE);
-                    case 'D' -> new Tile(ActorType.DOOR_LOCKED, TileState.PASSIVE);
-                    default -> throw new IllegalStateException("Unexpected value: " + id);
-                });
-            }
-        }
-    }
 }

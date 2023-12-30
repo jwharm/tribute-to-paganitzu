@@ -5,12 +5,13 @@ import java.util.Map;
 
 public class Tile {
 
-    public static final Tile OUT_OF_BOUNDS = new Tile(ActorType.OUT_OF_BOUNDS, TileState.PASSIVE);
+    public static final Tile OUT_OF_BOUNDS = new Tile(ActorType.OUT_OF_BOUNDS, TileState.PASSIVE, "0017");
 
+    private final Map<String, String> properties = new HashMap<>();
     private final ActorType type;
+    private final String tileRef;
     private int row, col;
     private TileState state;
-    private final Map<String, String> properties = new HashMap<>();
 
     public ActorType type() {
         return type;
@@ -40,8 +41,12 @@ public class Tile {
         return state;
     }
 
+    public String tileRef() {
+        return tileRef;
+    }
+
     public void draw(Game game) {
-        game.draw(row, col, type().name() + ".png");
+        game.draw(row, col, tileRef);
     }
 
     public void setRow(int row) {
@@ -56,8 +61,9 @@ public class Tile {
         this.state = state;
     }
 
-    public Tile(ActorType type, TileState state) {
+    public Tile(ActorType type, TileState state, String ref) {
         this.type = type;
         this.state = state;
+        this.tileRef = ref;
     }
 }

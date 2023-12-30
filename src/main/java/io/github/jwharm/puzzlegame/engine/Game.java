@@ -1,9 +1,13 @@
 package io.github.jwharm.puzzlegame.engine;
 
+import io.github.jwharm.puzzlegame.io.ImageCache;
 import io.github.jwharm.puzzlegame.transitions.*;
 import io.github.jwharm.puzzlegame.ui.DrawCommand;
+import org.freedesktop.cairo.Filter;
 
 import java.util.*;
+
+import static io.github.jwharm.puzzlegame.ui.GamePaintable.TILE_SIZE;
 
 public class Game {
 
@@ -98,15 +102,23 @@ public class Game {
     }
 
     private void consume(Board board, Tile target) {
-        board.replace(target, new Tile(ActorType.EMPTY, TileState.PASSIVE));
+        board.replace(target, new Tile(ActorType.EMPTY, TileState.PASSIVE, "0017"));
     }
 
-    public void draw(Position position, String file) {
-        draw(position.row(), position.col(), file);
+    public void draw(Position position, String tileRef) {
+        draw(position.row(), position.col(), tileRef);
     }
 
-    public void draw(float row, float col, String file) {
-        drawCommands.add(new DrawCommand(row, col, file));
+    public void draw(DrawCommand cmd) {
+        drawCommands.add(cmd);
+    }
+
+    public void draw(float row, float col, String tileRef) {
+        drawCommands.add((cr) -> {
+            cr.setSource(ImageCache.getInstance().get(tileRef), col * TILE_SIZE, row * TILE_SIZE);
+            cr.getSource().setFilter(Filter.NEAREST);
+            cr.paint();
+        });
     }
 
     public void schedule(Transition transition) {

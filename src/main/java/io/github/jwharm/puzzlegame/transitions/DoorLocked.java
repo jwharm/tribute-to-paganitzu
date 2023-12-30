@@ -19,7 +19,7 @@ public class DoorLocked implements Transition {
         for (var position : keyLocations)
             if (game.board().get(position).type() == ActorType.KEY)
                 return Result.CONTINUE;
-        game.board().replace(door, new Tile(ActorType.DOOR_UNLOCKED, TileState.ACTIVE));
+        game.board().replace(door, new Tile(ActorType.DOOR_UNLOCKED, TileState.ACTIVE, "0037"));
         game.schedule(new DoorUnlocked(door.position()));
         return Result.DONE;
     }

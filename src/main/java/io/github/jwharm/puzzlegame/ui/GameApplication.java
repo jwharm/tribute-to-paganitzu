@@ -5,6 +5,7 @@ import io.github.jwharm.javagi.gobject.types.Types;
 import io.github.jwharm.puzzlegame.engine.Board;
 import io.github.jwharm.puzzlegame.engine.Game;
 import io.github.jwharm.puzzlegame.engine.GameState;
+import io.github.jwharm.puzzlegame.io.LevelReader;
 import org.gnome.gio.ApplicationFlags;
 import org.gnome.gio.SimpleAction;
 import org.gnome.glib.GLib;
@@ -13,6 +14,7 @@ import org.gnome.gobject.GObject;
 import org.gnome.adw.Application;
 import org.gnome.gtk.Window;
 
+import java.io.IOException;
 import java.lang.foreign.MemorySegment;
 
 public class GameApplication extends Application {
@@ -53,8 +55,12 @@ public class GameApplication extends Application {
 
     private GameWindow createWindow() {
         GameWindow win = GameWindow.create(this);
-        var game = stub();
-        win.setGame(game);
+        try {
+            var game = loadLevel(1);
+            win.setGame(game);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
         GLib.timeoutAdd(1000 / FPS, () -> {
             updateGameState(win);
             return true;
@@ -67,21 +73,8 @@ public class GameApplication extends Application {
         win.invalidateContents();
     }
 
-    private Game stub() {
-        Board level1 = new Board("""
-                ==P=============
-                == ==== ~~======
-                == ==== ~~======
-                =       ::======
-                =       ::   GG=
-                = o=========K===
-                =     2======= =
-                = ==============
-                = ==============
-                =              =
-                ====K       GGG=
-                =======D========
-                """);
-        return new Game(level1, new GameState());
+    private Game loadLevel(int stage) throws IOException {
+        Board board = LevelReader.read(STR."level\{stage}.txt");
+        return new Game(board, new GameState());
     }
 }

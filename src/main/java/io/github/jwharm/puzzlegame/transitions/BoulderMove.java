@@ -20,11 +20,11 @@ public class BoulderMove implements Transition {
         progress += 0.5f;
         Position current = new Position(boulder.row(), boulder.col());
         if (progress < 1) {
-            game.draw(current.move(direction, progress), "boulder.png");
+            game.draw(current.move(direction, progress), "0018");
             game.board().swap(boulder, target);
             return Result.CONTINUE;
         } else {
-            game.draw(current, "boulder.png");
+            game.draw(current, "0018");
             boulder.setState(TileState.PASSIVE);
             return Result.DONE;
         }

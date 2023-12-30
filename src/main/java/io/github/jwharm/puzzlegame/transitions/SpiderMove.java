@@ -22,11 +22,12 @@ public class SpiderMove implements Transition {
         progress += 0.5f;
         Position current = new Position(spider.row(), spider.col());
         if (progress < 1) {
-            game.draw(current.move(direction, progress), "spider.png");
+            game.draw(current, "0017");
+            game.draw(current.move(direction, progress), "0023");
             game.board().swap(spider, game.board().get(spider.position().move(direction)));
             return Result.CONTINUE;
         } else {
-            game.draw(current, "spider.png");
+            game.draw(current, "0023");
             if (!bite(game))
                 scheduleNextMove(game);
             return Result.DONE;
@@ -55,7 +56,7 @@ public class SpiderMove implements Transition {
     }
 
     private void explode(Game game) {
-        game.board().set(spider.row(), spider.col(), new Tile(ActorType.EMPTY, TileState.PASSIVE));
+        game.board().set(spider.row(), spider.col(), new Tile(ActorType.EMPTY, TileState.PASSIVE, "0017"));
         game.schedule(new SpawnGem(spider.position().move(Direction.UP)));
         game.schedule(new SpawnGem(spider.position().move(Direction.DOWN)));
         game.schedule(new SpawnGem(spider.position().move(Direction.LEFT)));
