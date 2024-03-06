@@ -1,9 +1,6 @@
 package io.github.jwharm.puzzlegame.transitions;
 
-import io.github.jwharm.puzzlegame.engine.Game;
-import io.github.jwharm.puzzlegame.engine.Result;
-import io.github.jwharm.puzzlegame.engine.Tile;
-import io.github.jwharm.puzzlegame.engine.Transition;
+import io.github.jwharm.puzzlegame.engine.*;
 
 public class SnakeBite implements Transition {
 
@@ -19,7 +16,7 @@ public class SnakeBite implements Transition {
     @Override
     public Result run(Game game) {
         col += Integer.signum(player.col() - snake.col());
-        game.draw(snake.row(), col, "0088");
+        game.draw(snake.row(), col, Image.VENOM);
         if (col != player.col()) return Result.CONTINUE;
         game.schedule(new Die());
         return Result.DONE;

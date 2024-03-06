@@ -5,6 +5,7 @@ import io.github.jwharm.javagi.gobject.types.Types;
 import io.github.jwharm.puzzlegame.engine.Board;
 import io.github.jwharm.puzzlegame.engine.Game;
 import io.github.jwharm.puzzlegame.engine.GameState;
+import io.github.jwharm.puzzlegame.io.ImageCache;
 import io.github.jwharm.puzzlegame.io.LevelReader;
 import org.gnome.gio.ApplicationFlags;
 import org.gnome.gio.SimpleAction;
@@ -47,10 +48,15 @@ public class GameApplication extends Application {
 
     @Override
     public void activate() {
-        Window win = this.getActiveWindow();
-        if (win == null)
-            win = createWindow();
-        win.present();
+        try {
+            Window win = this.getActiveWindow();
+            if (win == null)
+                win = createWindow();
+            win.present();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     private GameWindow createWindow() {
@@ -61,7 +67,7 @@ public class GameApplication extends Application {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        GLib.timeoutAdd(1000 / FPS, () -> {
+        GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000 / FPS, () -> {
             updateGameState(win);
             return true;
         });
@@ -74,7 +80,9 @@ public class GameApplication extends Application {
     }
 
     private Game loadLevel(int stage) throws IOException {
-        Board board = LevelReader.read(STR."level\{stage}.txt");
+        ImageCache.init("C:/dev/PAGA1/PAGA1.012");
+        LevelReader.init("C:/dev/PAGA1/PAGA1.007");
+        Board board = LevelReader.get(stage);
         return new Game(board, new GameState());
     }
 }

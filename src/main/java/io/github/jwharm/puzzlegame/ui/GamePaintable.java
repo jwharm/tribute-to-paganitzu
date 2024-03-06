@@ -16,7 +16,7 @@ import java.lang.foreign.MemorySegment;
 
 public class GamePaintable extends GObject implements Paintable {
 
-    public static final int TILE_SIZE = 8;
+    public static final int TILE_SIZE = 16;
     private static final Type gtype = Types.register(GamePaintable.class);
     private Game game;
 

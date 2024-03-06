@@ -9,18 +9,26 @@ public enum ActorType {
     DOOR_LOCKED(3),
     DOOR_UNLOCKED(4),
     GEM(5),
-    KEY(6),
-    MUD(7),
-    PLAYER(8),
-    SNAKE(9),
-    SPIDER(10),
-    WALL(11),
-    WATER(12);
+    HIDDEN_PASSAGE(6),
+    KEY(7),
+    MUD(8),
+    PIPE(9),
+    PLAYER(10),
+    SNAKE(11),
+    SPIDER(12),
+    SPIKES(13),
+    WALL(14),
+    WARP(15),
+    WATER(16);
 
     private final int id;
 
     ActorType(int id) {
         this.id = id;
+    }
+
+    public int id() {
+        return id;
     }
 
     public static ActorType of(int id) {

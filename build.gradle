@@ -17,8 +17,8 @@ idea {
 }
 
 dependencies {
-    implementation 'io.github.jwharm.javagi:adw:0.8.1'
-    implementation 'io.github.jwharm.cairobindings:cairo:1.18.1'
+    implementation 'io.github.jwharm.javagi:adw:0.9.0'
+    implementation 'io.github.jwharm.cairobindings:cairo:1.18.2'
 }
 
 java {

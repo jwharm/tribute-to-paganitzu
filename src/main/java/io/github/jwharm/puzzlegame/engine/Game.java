@@ -4,6 +4,7 @@ import io.github.jwharm.puzzlegame.io.ImageCache;
 import io.github.jwharm.puzzlegame.transitions.*;
 import io.github.jwharm.puzzlegame.ui.DrawCommand;
 import org.freedesktop.cairo.Filter;
+import org.freedesktop.cairo.ImageSurface;
 
 import java.util.*;
 
@@ -14,7 +15,8 @@ public class Game {
     private record Event(int when, Transition transition) {}
 
     private final Board board;
-    private final Queue<Event> transitions = new PriorityQueue<>(Comparator.comparing(Event::when).thenComparing(e -> e.transition() instanceof PlayerMove));
+    private final Queue<Event> transitions = new PriorityQueue<>(
+            Comparator.comparing(Event::when).thenComparing(e -> e.transition() instanceof PlayerMove));
     private final List<DrawCommand> drawCommands = new ArrayList<>();
     private final GameState state;
     private int ticks = 0;
@@ -102,20 +104,20 @@ public class Game {
     }
 
     private void consume(Board board, Tile target) {
-        board.replace(target, new Tile(ActorType.EMPTY, TileState.PASSIVE, "0017"));
+        board.replace(target, new Tile(ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY));
     }
 
-    public void draw(Position position, String tileRef) {
-        draw(position.row(), position.col(), tileRef);
+    public void draw(Position position, Image image) {
+        draw(position.row(), position.col(), image);
     }
 
     public void draw(DrawCommand cmd) {
         drawCommands.add(cmd);
     }
 
-    public void draw(float row, float col, String tileRef) {
+    public void draw(float row, float col, Image image) {
         drawCommands.add((cr) -> {
-            cr.setSource(ImageCache.getInstance().get(tileRef), col * TILE_SIZE, row * TILE_SIZE);
+            cr.setSource(ImageCache.get(image), col * TILE_SIZE, row * TILE_SIZE);
             cr.getSource().setFilter(Filter.NEAREST);
             cr.paint();
         });

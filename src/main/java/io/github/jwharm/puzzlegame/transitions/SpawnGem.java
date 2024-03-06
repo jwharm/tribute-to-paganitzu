@@ -19,11 +19,20 @@ public class SpawnGem implements Transition {
         if (game.ticks() % DELAY != 0) return Result.CONTINUE;
 
         progress++;
-        game.draw(row, col, "0088");
+
+        Image image;
+        if (progress == 1) image = Image.POOF_1;
+        if (progress == 2) image = Image.POOF_2;
+        if (progress == 3) image = Image.POOF_3;
+        if (progress == 4) image = Image.POOF_4;
+        if (progress == 5) image = Image.POOF_5;
+        else image = Image.POOF_6;
+
+        game.draw(row, col, image);
 
         if (progress < DONE) return Result.CONTINUE;
 
-        game.board().set((int) row, (int) col, new Tile(ActorType.GEM, TileState.PASSIVE, "0088"));
+        game.board().set((int) row, (int) col, new Tile(ActorType.GEM, TileState.PASSIVE, Image.GEM_1));
         return Result.DONE;
     }
 }

@@ -11,7 +11,7 @@ public class SpiderMove implements Transition {
 
     public SpiderMove(Tile spider, Direction direction) {
         this.spider = spider;
-        this.clockwise = !"false".equals(spider.getProperty("clockwise")); // default true
+        this.clockwise = spider.direction() == Direction.RIGHT; // default true
         this.direction = direction;
     }
 
@@ -22,12 +22,12 @@ public class SpiderMove implements Transition {
         progress += 0.5f;
         Position current = new Position(spider.row(), spider.col());
         if (progress < 1) {
-            game.draw(current, "0017");
-            game.draw(current.move(direction, progress), "0023");
+            game.draw(current, Image.EMPTY);
+            game.draw(current.move(direction, progress), Image.SPIDER_1);
             game.board().swap(spider, game.board().get(spider.position().move(direction)));
             return Result.CONTINUE;
         } else {
-            game.draw(current, "0023");
+            game.draw(current, Image.SPIDER_2);
             if (!bite(game))
                 scheduleNextMove(game);
             return Result.DONE;
@@ -56,10 +56,8 @@ public class SpiderMove implements Transition {
     }
 
     private void explode(Game game) {
-        game.board().set(spider.row(), spider.col(), new Tile(ActorType.EMPTY, TileState.PASSIVE, "0017"));
-        game.schedule(new SpawnGem(spider.position().move(Direction.UP)));
-        game.schedule(new SpawnGem(spider.position().move(Direction.DOWN)));
-        game.schedule(new SpawnGem(spider.position().move(Direction.LEFT)));
-        game.schedule(new SpawnGem(spider.position().move(Direction.RIGHT)));
+        game.board().set(spider.row(), spider.col(), new Tile(ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY));
+        for (var direction : Direction.values()) // all directions: up, down, left and right
+            game.schedule(new SpawnGem(spider.position().move(direction)));
     }
 }
