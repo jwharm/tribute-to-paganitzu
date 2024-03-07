@@ -2,14 +2,14 @@ package io.github.jwharm.puzzlegame.engine;
 
 public class GameState {
 
-    private int level = 1, lives = 3, keys = 0, gems = 0, score = 0;
+    private int level = 1, lives = 3, score = 0, bonus = 300;
     private boolean won = false;
 
     public int level() {
         return level;
     }
 
-    public void nextLevel() {
+    public void goToNextLevel() {
         level++;
         won = false;
     }
@@ -26,27 +26,23 @@ public class GameState {
         lives--;
     }
 
-    public int keys() {
-        return keys;
-    }
-
     public void keyCollected() {
-        keys++;
-    }
-
-    public int gems() {
-        return gems;
+        score += 10;
     }
 
     public void gemCollected() {
-        gems++;
+        score += 50;
+    }
+
+    public void decreaseBonus() {
+        bonus--;
     }
 
     public int score() {
         return score;
     }
 
-    public void addScore(int amount) {
-        score += amount;
+    public int bonus() {
+        return bonus;
     }
 }

@@ -20,7 +20,6 @@ public class PlayerMove implements Transition {
         progress += 0.5f;
         Position current = new Position(player.row(), player.col());
         if (progress < 1) {
-            game.draw(current, standImage());
             game.draw(current.move(direction, progress), moveImage());
             game.board().swap(player, target);
             return Result.CONTINUE;

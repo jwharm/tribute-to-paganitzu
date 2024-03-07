@@ -2,37 +2,30 @@ package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
-public class SpawnGem implements Transition {
+import java.util.List;
 
-    private static final int DONE = 6, DELAY = 2;
+import static io.github.jwharm.puzzlegame.engine.Image.*;
 
-    private final float row, col;
-    private int progress = 0;
+public class SpawnGem extends Animation {
 
-    public SpawnGem(Position position) {
-        this.row = position.row();
-        this.col = position.col();
+    private static final int DELAY = 1;
+    private static final List<Image> IMAGES = List.of(POOF_1, POOF_2, POOF_3, POOF_4, POOF_5, POOF_6);
+    private static final boolean LOOP = false;
+
+    private final Tile tile;
+
+    public SpawnGem(Tile tile) {
+        super(DELAY, tile, IMAGES, LOOP);
+        this.tile = tile;
     }
 
     @Override
     public Result run(Game game) {
-        if (game.ticks() % DELAY != 0) return Result.CONTINUE;
+        Result result = super.run(game);
 
-        progress++;
+        if (result == Result.DONE)
+            game.board().set(tile.row(), tile.row(), new Tile(ActorType.GEM, TileState.PASSIVE, Image.GEM_1));
 
-        Image image;
-        if (progress == 1) image = Image.POOF_1;
-        if (progress == 2) image = Image.POOF_2;
-        if (progress == 3) image = Image.POOF_3;
-        if (progress == 4) image = Image.POOF_4;
-        if (progress == 5) image = Image.POOF_5;
-        else image = Image.POOF_6;
-
-        game.draw(row, col, image);
-
-        if (progress < DONE) return Result.CONTINUE;
-
-        game.board().set((int) row, (int) col, new Tile(ActorType.GEM, TileState.PASSIVE, Image.GEM_1));
-        return Result.DONE;
+        return result;
     }
 }

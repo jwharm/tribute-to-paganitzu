@@ -1,13 +1,11 @@
 package io.github.jwharm.puzzlegame.engine;
 
-import io.github.jwharm.puzzlegame.io.ImageCache;
-
 public class Tile {
 
     public static final Tile OUT_OF_BOUNDS = new Tile(ActorType.OUT_OF_BOUNDS, TileState.PASSIVE, Image.EMPTY);
 
     private final ActorType type;
-    private final Image image;
+    private Image image;
     private int row, col;
     private TileState state;
     private Direction direction;
@@ -54,6 +52,12 @@ public class Tile {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+        if (type == ActorType.PLAYER)
+            image = switch(direction) {
+                case LEFT -> Image.PLAYER_LEFT_STAND;
+                case RIGHT -> Image.PLAYER_RIGHT_STAND;
+                default -> image;
+            };
     }
 
     public Tile(ActorType type, TileState state, Image image) {

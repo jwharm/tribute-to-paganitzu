@@ -4,7 +4,6 @@ import io.github.jwharm.puzzlegame.io.ImageCache;
 import io.github.jwharm.puzzlegame.transitions.*;
 import io.github.jwharm.puzzlegame.ui.DrawCommand;
 import org.freedesktop.cairo.Filter;
-import org.freedesktop.cairo.ImageSurface;
 
 import java.util.*;
 
@@ -13,6 +12,8 @@ import static io.github.jwharm.puzzlegame.ui.GamePaintable.TILE_SIZE;
 public class Game {
 
     private record Event(int when, Transition transition) {}
+
+    private final Random RAND = new Random();
 
     private final Board board;
     private final Queue<Event> transitions = new PriorityQueue<>(
@@ -25,10 +26,10 @@ public class Game {
     public Game(Board board, GameState state) {
         this.board = board;
         this.state = state;
-        startTransitions(board);
+        schedule(new BoardReveal());
     }
 
-    private void startTransitions(Board board) {
+    public void startTransitions(Board board) {
         for (var tile : board.getAll())
             switch(tile.type()) {
                 case DOOR_LOCKED -> schedule(new DoorLocked(tile, board.getAll(ActorType.KEY)));
@@ -70,6 +71,9 @@ public class Game {
         Tile player = board.player();
         if (player.state() == TileState.ACTIVE) return;
         Tile target = board.get(player.position().move(direction));
+        // Face the right way
+        if (direction == Direction.LEFT || direction == Direction.RIGHT)
+            player.setDirection(direction);
         boolean canMove = target.type() == ActorType.EMPTY;
 
         switch(target.type()) {
@@ -132,7 +136,16 @@ public class Game {
         for (int row = 0; row < Board.HEIGHT; row++) {
             for (int col = 0; col < Board.WIDTH; col++) {
                 Tile tile = board().get(row, col);
-                if (tile.state() == TileState.PASSIVE) tile.draw(this);
+
+                if (tile.state() == TileState.PASSIVE)
+                    tile.draw(this);
+
+                // Gems sparkle randomly
+                int GEM_SPARKLE_RANDOM_FACTOR = 20;
+                if (tile.type() == ActorType.GEM
+                        && tile.state() == TileState.PASSIVE
+                        && RAND.nextInt(GEM_SPARKLE_RANDOM_FACTOR) == 0)
+                    schedule(new GemSparkle(tile));
             }
         }
         while (!transitions.isEmpty() && transitions.peek().when() <= ticks) {

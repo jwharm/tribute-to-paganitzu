@@ -1,26 +1,24 @@
 package io.github.jwharm.puzzlegame.ui;
 
+import io.github.jwharm.javagi.base.Out;
 import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gobject.types.Types;
 import io.github.jwharm.puzzlegame.engine.*;
-import org.gnome.adw.*;
 import org.gnome.adw.Application;
 import org.gnome.adw.ApplicationWindow;
+import org.gnome.adw.HeaderBar;
 import org.gnome.gdk.Gdk;
 import org.gnome.glib.Type;
 import org.gnome.gobject.GObject;
-import org.gnome.gobject.Value;
 import org.gnome.gtk.*;
 
-import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 
 public class GameWindow extends ApplicationWindow {
 
-    private static final int MIN_WIDTH = 560;
-    private static final int SIDEBAR_WIDTH = 200;
     private static final Type gtype = Types.register(GameWindow.class);
 
+    private Label levelLabel, livesLabel, scoreLabel;
     private GamePaintable paintable;
 
     public static Type getType() {
@@ -35,8 +33,7 @@ public class GameWindow extends ApplicationWindow {
         return GObject.newInstance(getType(),
                 "application", application,
                 "title", "Puzzle game",
-                "width-request", MIN_WIDTH - SIDEBAR_WIDTH, "height-request", 200,
-                "default-width", 840, "default-height", 480);
+                "default-width", 580, "default-height", 480);
     }
 
     @InstanceInit
@@ -50,6 +47,16 @@ public class GameWindow extends ApplicationWindow {
         });
 
         this.paintable = GamePaintable.create();
+
+        HeaderBar headerBar = new HeaderBar();
+        levelLabel = new Label("Level: 0");
+        livesLabel = new Label("Lives: 0");
+        scoreLabel = new Label("Score: 0");
+        headerBar.packStart(levelLabel);
+        headerBar.packStart(livesLabel);
+        headerBar.packStart(scoreLabel);
+        updateHeaderBar();
+
         Picture picture = Picture.builder()
                 .setPaintable(paintable)
                 .setHexpand(true)
@@ -59,29 +66,31 @@ public class GameWindow extends ApplicationWindow {
                 .setHeightRequest(Board.HEIGHT * GamePaintable.TILE_SIZE)
                 .build();
 
-        Widget sidebar = Label.builder()
-                .setWidthRequest(SIDEBAR_WIDTH)
-                .setLabel("Sidebar")
-                .build();
+        Grid grid = new Grid();
+        grid.attach(headerBar, 0, 0, 1, 1);
+        grid.attach(picture, 0, 1, 1, 1);
+        this.setContent(grid);
 
-        var overlaySplitView = OverlaySplitView.builder()
-                .setSidebar(sidebar)
-                .setContent(picture)
-                .build();
-
-        this.setContent(overlaySplitView);
-
-        Value vTrue = Value.allocate(Arena.global()).init(Types.BOOLEAN);
-        vTrue.setBoolean(true);
-        var breakpoint = Breakpoint.builder()
-                .setCondition(BreakpointCondition.parse(STR."max-width: \{MIN_WIDTH}px"))
-                .build();
-        breakpoint.addSetter(overlaySplitView, "collapsed", vTrue);
-        this.addBreakpoint(breakpoint);
+        this.onNotify("default-height", _ -> {
+            int headerBarHeight = headerBar.getHeight();
+            if (headerBarHeight == 0) headerBarHeight = 47;
+            Out<Integer> w = new Out<>();
+            this.getDefaultSize(w, null);
+            this.setDefaultSize(w.get(), ((int) (w.get() * 0.75)) + headerBarHeight);
+        });
     }
 
     public void invalidateContents() {
         paintable.invalidateContents();
+        updateHeaderBar();
+    }
+
+    private void updateHeaderBar() {
+        if (game() != null) {
+            levelLabel.setLabel("Room: " + game().state().level());
+            livesLabel.setLabel("Lives: " + game().state().lives());
+            scoreLabel.setLabel("Score: " + game().state().score());
+        }
     }
 
     public void setGame(Game game) {

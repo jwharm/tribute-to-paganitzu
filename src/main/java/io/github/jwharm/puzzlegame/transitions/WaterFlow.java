@@ -2,21 +2,17 @@ package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
-public class WaterFlow implements Transition {
+import java.util.List;
 
-    private static final int DELAY = 2;
-    private final Tile tile;
-    private int state = 0;
+import static io.github.jwharm.puzzlegame.engine.Image.*;
+
+public class WaterFlow extends Animation {
+
+    private static final int DELAY = 8;
+    private static final List<Image> IMAGES = List.of(WATER_5_1, WATER_5_2);
+    private static final boolean LOOP = true;
 
     public WaterFlow(Tile tile) {
-        this.tile = tile;
-    }
-
-    @Override
-    public Result run(Game game) {
-        if (game.ticks() % DELAY == 0)
-            if (state == 0) state = 1; else state = 0;
-        game.draw(tile.row(), tile.col(), state == 0 ? Image.WATER_5_1 : Image.WATER_5_2);
-        return Result.CONTINUE;
+        super(DELAY, tile, IMAGES, LOOP);
     }
 }
