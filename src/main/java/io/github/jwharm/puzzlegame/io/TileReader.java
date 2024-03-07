@@ -74,17 +74,18 @@ public class TileReader {
     }
 
     /**
-     * Determine whether the bit at position {@code pos} is 1
+     * Determine whether the bit at position {@code pos} is 1.
+     * The images are mirrored so we compensate for that
      */
     private static int bit(short int16le, int pos) {
         // Convert short to byte array with big-endian byte order
         byte[] byteArray = new byte[2];
-        byteArray[0] = (byte) ((int16le >> 8) & 0xFF);
-        byteArray[1] = (byte) (int16le & 0xFF);
+        byteArray[1] = (byte) ((int16le >> 8) & 0xFF);
+        byteArray[0] = (byte) (int16le & 0xFF);
 
         // Determine the byte and bit index for the specified position
         int byteIndex = pos / 8;
-        int bitIndex = pos % 8;
+        int bitIndex = 7 - (pos % 8);
 
         // Extract the bit at the specified position
         byte targetByte = byteArray[byteIndex];
