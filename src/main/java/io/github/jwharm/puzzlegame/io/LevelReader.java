@@ -12,12 +12,12 @@ public class LevelReader {
 
     private static byte[] data;
 
-    public static void init(String filename) {
+    public static void load(String filename) {
         data = FileIO.readFile(filename);
     }
 
-    public static Room get(int level) {
-        return readLevelsFile(data, level);
+    public static Room get(int room) {
+        return readLevelsFile(data, room);
     }
 
     private static Room readLevelsFile(byte[] data, int room) {

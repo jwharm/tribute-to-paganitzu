@@ -34,6 +34,10 @@ public class Tile {
         return direction;
     }
 
+    public Image image() {
+        return image;
+    }
+
     public void draw(Game game) {
         game.draw(row, col, image);
     }
