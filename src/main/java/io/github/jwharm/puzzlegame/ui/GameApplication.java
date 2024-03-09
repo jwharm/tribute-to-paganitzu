@@ -62,7 +62,7 @@ public class GameApplication extends Application {
     private GameWindow createWindow() {
         GameWindow win = GameWindow.create(this);
         try {
-            var game = loadLevel(4);
+            var game = loadRoom(1);
             win.setGame(game);
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -74,15 +74,21 @@ public class GameApplication extends Application {
         return win;
     }
 
+    /*
+     * This function is run every "frame". It will update the game state, and
+     * redraw the screen.
+     */
     private void updateGameState(GameWindow win) {
-        win.game().updateState();
-        win.invalidateContents();
+        if (!win.game().paused()) {
+            win.game().updateState();
+            win.invalidateContents();
+        }
     }
 
-    private Game loadLevel(int stage) throws IOException {
-        ImageCache.init("C:/dev/PAGA1/PAGA1.012");
-        LevelReader.init("C:/dev/PAGA1/PAGA1.007");
-        Room room = LevelReader.get(stage);
+    private Game loadRoom(int r) throws IOException {
+        ImageCache.init("/home/jw/Documenten/PAGA1/PAGA1.012");
+        LevelReader.load("/home/jw/Documenten/PAGA1/PAGA1.007");
+        Room room = LevelReader.get(r);
         return new Game(room, new GameState());
     }
 }

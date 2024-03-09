@@ -28,7 +28,7 @@ public class Die extends Animation {
     public Result run(Game game) {
         // Initially, pause the game and update the status
         if (init) {
-            game.pause();
+            game.freeze();
             game.state().die();
             init = false;
         }

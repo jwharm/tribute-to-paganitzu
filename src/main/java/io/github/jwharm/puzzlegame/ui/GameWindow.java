@@ -19,6 +19,7 @@ public class GameWindow extends ApplicationWindow {
     private static final Type gtype = Types.register(GameWindow.class);
 
     private Label levelLabel, livesLabel, scoreLabel;
+    private Button pauseButton;
     private GamePaintable paintable;
 
     public static Type getType() {
@@ -33,7 +34,8 @@ public class GameWindow extends ApplicationWindow {
         return GObject.newInstance(getType(),
                 "application", application,
                 "title", "Puzzle game",
-                "default-width", 580, "default-height", 480);
+                "default-width", 580,
+                "default-height", 480);
     }
 
     @InstanceInit
@@ -49,9 +51,11 @@ public class GameWindow extends ApplicationWindow {
         this.paintable = GamePaintable.create();
 
         HeaderBar headerBar = new HeaderBar();
+        pauseButton = Button.fromIconName("media-playback-pause");
         levelLabel = new Label("Level: 0");
         livesLabel = new Label("Lives: 0");
         scoreLabel = new Label("Score: 0");
+        headerBar.packStart(pauseButton);
         headerBar.packStart(levelLabel);
         headerBar.packStart(livesLabel);
         headerBar.packStart(scoreLabel);
@@ -78,6 +82,16 @@ public class GameWindow extends ApplicationWindow {
             this.getDefaultSize(w, null);
             this.setDefaultSize(w.get(), ((int) (w.get() * 0.75)) + headerBarHeight);
         });
+
+        pauseButton.onClicked(() -> {
+            if (game().paused()) {
+                game().resume();
+                pauseButton.setIconName("media-playback-pause");
+            } else {
+                game().pause();
+                pauseButton.setIconName("media-playback-start");
+            }
+        });
     }
 
     public void invalidateContents() {
@@ -102,7 +116,9 @@ public class GameWindow extends ApplicationWindow {
     }
 
     public boolean keyPressed(int keyVal) {
-        if (game().paused()) return true;
+        if (game().paused() || game().frozen())
+            return true;
+
         switch(keyVal) {
             case Gdk.KEY_Left -> game().move(Direction.LEFT);
             case Gdk.KEY_Up -> game().move(Direction.UP);

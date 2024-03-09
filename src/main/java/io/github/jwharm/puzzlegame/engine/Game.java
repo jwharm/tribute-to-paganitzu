@@ -19,15 +19,21 @@ public class Game {
      */
     private final Random RAND = new Random();
 
-    //
+    /*
+     * The queue on which all transitions are scheduled. It is ordered by the
+     * requested event time. When multiple events are scheduled in one frame,
+     * a `PlayerMove` event will be processed first.
+     */
     private final Queue<Event> transitions = new PriorityQueue<>(
-            Comparator.comparing(Event::when).thenComparing(e -> e.transition() instanceof PlayerMove));
+            Comparator.comparing(Event::when)
+                      .thenComparing(e -> e.transition() instanceof PlayerMove));
 
     // Global game state
     private final Room room;
     private final GameState state;
     private int ticks = 0;
     private boolean paused = false;
+    private boolean frozen = true;
 
     private final List<DrawCommand> drawCommands = new ArrayList<>();
 
@@ -73,6 +79,18 @@ public class Game {
 
     public void resume() {
         paused = false;
+    }
+
+    public boolean frozen() {
+        return frozen;
+    }
+
+    public void freeze() {
+        frozen = true;
+    }
+
+    public void unfreeze() {
+        frozen = false;
     }
 
     public void move(Direction direction) {
@@ -143,6 +161,9 @@ public class Game {
         transitions.add(new Event(ticks + 1, transition));
     }
 
+    /**
+     * This will draw all tiles and run all scheduled transitions.
+     */
     public void updateState() {
         ticks++;
         for (int row = 0; row < Room.HEIGHT; row++) {
@@ -161,6 +182,7 @@ public class Game {
                     schedule(new GemSparkle(tile));
             }
         }
+
         while (!transitions.isEmpty() && transitions.peek().when() <= ticks) {
             var transition = transitions.poll().transition();
             if (transition.run(this) == Result.CONTINUE)

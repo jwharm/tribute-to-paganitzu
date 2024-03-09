@@ -36,9 +36,6 @@ public class BoardReveal implements Transition {
 
     @Override
     public Result run(Game game) {
-        if (first && current == 0)
-            game.pause();
-
         /*
          * In the first iteration (first=true) we increasingly draw more blue
          * squares, in the second iteration we draw fewer squares in each
@@ -53,8 +50,8 @@ public class BoardReveal implements Transition {
          * resume the game and start the usual transitions.
          */
         if (!first && current == 0) {
-            game.resume();
             game.scheduleTransitions(game.board());
+            game.unfreeze();
             return Result.DONE;
         }
 

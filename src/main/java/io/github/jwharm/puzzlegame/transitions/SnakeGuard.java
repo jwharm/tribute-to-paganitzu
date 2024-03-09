@@ -61,7 +61,7 @@ public class SnakeGuard implements Transition {
                 return Result.CONTINUE;
 
         // Bite
-        game.pause();
+        game.freeze();
         game.schedule(new SnakeBite(snake, player));
         snake.setState(TileState.PASSIVE);
         return Result.DONE;
