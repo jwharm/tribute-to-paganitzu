@@ -84,14 +84,16 @@ public class GameWindow extends ApplicationWindow {
         });
 
         pauseButton.onClicked(() -> {
-            if (game().paused()) {
-                game().resume();
-                pauseButton.setIconName("media-playback-pause");
-            } else {
-                game().pause();
-                pauseButton.setIconName("media-playback-start");
-            }
+            if (game().paused()) game().resume(); else game().pause();
+            updatePauseButton();
         });
+    }
+
+    private void updatePauseButton() {
+        pauseButton.setIconName(game().paused()
+                ? "media-playback-start"
+                : "media-playback-pause"
+        );
     }
 
     public void invalidateContents() {
@@ -101,6 +103,7 @@ public class GameWindow extends ApplicationWindow {
 
     private void updateHeaderBar() {
         if (game() != null) {
+            updatePauseButton();
             levelLabel.setLabel("Room: " + game().state().level());
             livesLabel.setLabel("Lives: " + game().state().lives());
             scoreLabel.setLabel("Score: " + game().state().score());

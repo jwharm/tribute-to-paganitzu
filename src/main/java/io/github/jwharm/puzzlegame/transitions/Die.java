@@ -33,6 +33,12 @@ public class Die extends Animation {
             init = false;
         }
         // Run the animation
-        return super.run(game);
+        var result = super.run(game);
+
+        // Pause the game when the animation is done
+        if (result == Result.DONE)
+            game.pause();
+
+        return result;
     }
 }
