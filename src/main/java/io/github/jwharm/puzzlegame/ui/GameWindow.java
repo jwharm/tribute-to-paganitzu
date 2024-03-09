@@ -1,9 +1,11 @@
 package io.github.jwharm.puzzlegame.ui;
 
+import io.github.jwharm.javagi.base.GErrorException;
 import io.github.jwharm.javagi.base.Out;
 import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gobject.types.Types;
 import io.github.jwharm.puzzlegame.engine.*;
+import io.github.jwharm.puzzlegame.io.LevelReader;
 import org.gnome.adw.Application;
 import org.gnome.adw.ApplicationWindow;
 import org.gnome.adw.HeaderBar;
@@ -52,10 +54,12 @@ public class GameWindow extends ApplicationWindow {
 
         HeaderBar headerBar = new HeaderBar();
         pauseButton = Button.fromIconName("media-playback-pause");
+        var resetButton = Button.fromIconName("view-refresh-symbolic");
         levelLabel = new Label("Level: 0");
         livesLabel = new Label("Lives: 0");
         scoreLabel = new Label("Score: 0");
         headerBar.packStart(pauseButton);
+        headerBar.packStart(resetButton);
         headerBar.packStart(levelLabel);
         headerBar.packStart(livesLabel);
         headerBar.packStart(scoreLabel);
@@ -86,6 +90,34 @@ public class GameWindow extends ApplicationWindow {
         pauseButton.onClicked(() -> {
             if (game().paused()) game().resume(); else game().pause();
             updatePauseButton();
+        });
+
+        resetButton.onClicked(this::reset);
+    }
+
+    private void reset() {
+        AlertDialog alert = AlertDialog.builder()
+                .setModal(true)
+                .setMessage("Reset room")
+                .setDetail("Do you want to reset the room?")
+                .setButtons(new String[] {"Reset", "Continue playing"})
+                .setDefaultButton(0)
+                .setCancelButton(1)
+                .build();
+
+        game().pause();
+
+        // Get dialog result
+        alert.choose(this, null, (_, result, _) -> {
+            try {
+                int button = alert.chooseFinish(result);
+                if (button == 0) {
+                    Room room = LevelReader.get(game().state().level());
+                    paintable.setGame(new Game(room, new GameState()));
+                    return;
+                }
+            } catch (GErrorException ignored) {} // user clicked cancel
+            game().resume();
         });
     }
 

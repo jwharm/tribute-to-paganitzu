@@ -1,6 +1,7 @@
 package io.github.jwharm.puzzlegame.engine;
 
 import io.github.jwharm.puzzlegame.io.ImageCache;
+import io.github.jwharm.puzzlegame.io.LevelReader;
 import io.github.jwharm.puzzlegame.transitions.*;
 import io.github.jwharm.puzzlegame.ui.DrawCommand;
 import org.freedesktop.cairo.Filter;
