@@ -41,6 +41,7 @@ public class Animation implements Transition {
 
     @Override
     public Result run(Game game) {
+        if (image == null || game.ticks() % delay == 0)
             image = iterator.next();
         game.draw(tile.row(), tile.col(), image);
 
