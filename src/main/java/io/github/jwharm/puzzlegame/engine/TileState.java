@@ -4,7 +4,8 @@ import java.util.NoSuchElementException;
 
 public enum TileState {
     ACTIVE(0),
-    PASSIVE(1);
+    PASSIVE(1),
+    REMOVED(2);
 
     public final int id;
 

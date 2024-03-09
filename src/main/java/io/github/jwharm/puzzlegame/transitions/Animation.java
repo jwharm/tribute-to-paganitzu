@@ -20,10 +20,6 @@ public class Animation implements Transition {
     private final Iterator<Image> iterator;
     private Image image;
 
-    public int delay() {
-        return delay;
-    }
-
     public Animation(int delay, Tile tile, List<Image> images, boolean loop) {
         this.delay = delay;
         this.tile = tile;
@@ -41,6 +37,11 @@ public class Animation implements Transition {
 
     @Override
     public Result run(Game game) {
+        // Check if the tile has been removed
+        if (tile.state() == TileState.REMOVED)
+            return Result.DONE;
+
+        // Draw the next animation frame
         if (image == null || game.ticks() % delay == 0)
             image = iterator.next();
         game.draw(tile.row(), tile.col(), image);

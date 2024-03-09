@@ -25,8 +25,7 @@ public class Game {
      * a `PlayerMove` event will be processed first.
      */
     private final Queue<Event> transitions = new PriorityQueue<>(
-            Comparator.comparing(Event::when)
-                      .thenComparing(Event::priority));
+            Comparator.comparing(Event::when).thenComparing(Event::priority));
 
     // Global game state
     private final Room room;
@@ -138,6 +137,7 @@ public class Game {
     }
 
     private void consume(Room room, Tile target) {
+        target.setState(TileState.REMOVED);
         Tile empty = new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY);
         room.replace(target, empty);
     }
