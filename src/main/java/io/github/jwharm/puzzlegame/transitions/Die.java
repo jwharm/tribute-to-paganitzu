@@ -9,6 +9,9 @@ import java.util.List;
 
 import static io.github.jwharm.puzzlegame.engine.Image.*;
 
+/**
+ * This animation is displayed when the player dies.
+ */
 public class Die extends Animation {
 
     private static final int DELAY = 1;
@@ -23,11 +26,13 @@ public class Die extends Animation {
 
     @Override
     public Result run(Game game) {
+        // Initially, pause the game and update the status
         if (init) {
             game.pause();
             game.state().die();
             init = false;
         }
+        // Run the animation
         return super.run(game);
     }
 }

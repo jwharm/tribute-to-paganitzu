@@ -62,8 +62,8 @@ public class GameWindow extends ApplicationWindow {
                 .setHexpand(true)
                 .setVexpand(true)
                 .setContentFit(ContentFit.CONTAIN)
-                .setWidthRequest(Board.WIDTH * GamePaintable.TILE_SIZE)
-                .setHeightRequest(Board.HEIGHT * GamePaintable.TILE_SIZE)
+                .setWidthRequest(Room.WIDTH * GamePaintable.TILE_SIZE)
+                .setHeightRequest(Room.HEIGHT * GamePaintable.TILE_SIZE)
                 .build();
 
         Grid grid = new Grid();

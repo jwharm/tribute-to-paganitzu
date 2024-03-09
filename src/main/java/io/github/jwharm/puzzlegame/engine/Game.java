@@ -13,34 +13,42 @@ public class Game {
 
     private record Event(int when, Transition transition) {}
 
+    /*
+     * Random number generator used for randomly trigger gem animations
+     * (sparkle effect).
+     */
     private final Random RAND = new Random();
 
-    private final Board board;
+    //
     private final Queue<Event> transitions = new PriorityQueue<>(
             Comparator.comparing(Event::when).thenComparing(e -> e.transition() instanceof PlayerMove));
-    private final List<DrawCommand> drawCommands = new ArrayList<>();
+
+    // Global game state
+    private final Room room;
     private final GameState state;
     private int ticks = 0;
     private boolean paused = false;
 
-    public Game(Board board, GameState state) {
-        this.board = board;
+    private final List<DrawCommand> drawCommands = new ArrayList<>();
+
+    public Game(Room room, GameState state) {
+        this.room = room;
         this.state = state;
         schedule(new BoardReveal());
     }
 
-    public void startTransitions(Board board) {
-        for (var tile : board.getAll())
+    public void scheduleTransitions(Room room) {
+        for (var tile : room.getAll())
             switch(tile.type()) {
-                case DOOR_LOCKED -> schedule(new DoorLocked(tile, board.getAll(ActorType.KEY)));
+                case DOOR_LOCKED -> schedule(new DoorLocked(tile, room.getAll(ActorType.KEY)));
                 case SNAKE -> schedule(new SnakeGuard(tile));
                 case SPIDER -> schedule(new SpiderMove(tile, Direction.RIGHT));
                 case WATER -> schedule(new WaterFlow(tile));
             }
     }
 
-    public Board board() {
-        return board;
+    public Room board() {
+        return room;
     }
 
     public GameState state() {
@@ -68,47 +76,51 @@ public class Game {
     }
 
     public void move(Direction direction) {
-        Tile player = board.player();
-        if (player.state() == TileState.ACTIVE) return;
-        Tile target = board.get(player.position().move(direction));
-        // Face the right way
+        Tile player = room.player();
+        if (player.state() == TileState.ACTIVE)
+            return;
+        Tile target = room.get(player.position().move(direction));
+
+        // Face in left or right direction
         if (direction == Direction.LEFT || direction == Direction.RIGHT)
             player.setDirection(direction);
-        boolean canMove = target.type() == ActorType.EMPTY;
 
+        // Determine if we can move in this direction
+        boolean canMove = target.type() == ActorType.EMPTY;
         switch(target.type()) {
             case BOULDER -> {
-                if (board.get(target.position().move(direction)).type() == ActorType.EMPTY) {
+                if (room.get(target.position().move(direction)).type() == ActorType.EMPTY) {
                     canMove = true;
                     schedule(new BoulderMove(target, direction));
                 }
             }
             case KEY -> {
                 state().keyCollected();
-                consume(board, target);
+                consume(room, target);
                 canMove = true;
             }
             case GEM -> {
                 state().gemCollected();
-                consume(board, target);
+                consume(room, target);
                 canMove = true;
             }
             case MUD -> {
-                consume(board, target);
+                consume(room, target);
                 canMove = true;
             }
             case DOOR_UNLOCKED -> {
                 pause();
-                consume(board, target);
+                consume(room, target);
                 state().win();
             }
         }
 
-        if (canMove) schedule(new PlayerMove(player, direction));
+        if (canMove)
+            schedule(new PlayerMove(player, direction));
     }
 
-    private void consume(Board board, Tile target) {
-        board.replace(target, new Tile(ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY));
+    private void consume(Room room, Tile target) {
+        room.replace(target, new Tile(ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY));
     }
 
     public void draw(Position position, Image image) {
@@ -133,8 +145,8 @@ public class Game {
 
     public void updateState() {
         ticks++;
-        for (int row = 0; row < Board.HEIGHT; row++) {
-            for (int col = 0; col < Board.WIDTH; col++) {
+        for (int row = 0; row < Room.HEIGHT; row++) {
+            for (int col = 0; col < Room.WIDTH; col++) {
                 Tile tile = board().get(row, col);
 
                 if (tile.state() == TileState.PASSIVE)
@@ -142,7 +154,8 @@ public class Game {
 
                 // Gems sparkle randomly
                 int GEM_SPARKLE_RANDOM_FACTOR = 20;
-                if (tile.type() == ActorType.GEM
+                if (!paused()
+                        && tile.type() == ActorType.GEM
                         && tile.state() == TileState.PASSIVE
                         && RAND.nextInt(GEM_SPARKLE_RANDOM_FACTOR) == 0)
                     schedule(new GemSparkle(tile));

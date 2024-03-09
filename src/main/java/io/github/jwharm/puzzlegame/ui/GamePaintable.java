@@ -1,7 +1,7 @@
 package io.github.jwharm.puzzlegame.ui;
 
 import io.github.jwharm.javagi.gobject.types.Types;
-import io.github.jwharm.puzzlegame.engine.Board;
+import io.github.jwharm.puzzlegame.engine.Room;
 import io.github.jwharm.puzzlegame.engine.Game;
 import org.freedesktop.cairo.Context;
 import org.gnome.gdk.Paintable;
@@ -29,8 +29,8 @@ public class GamePaintable extends GObject implements Paintable {
     }
 
     private float calculateScaleFactor(float width, float height) {
-        float w = width / Board.WIDTH / TILE_SIZE;
-        float h = height / Board.HEIGHT / TILE_SIZE;
+        float w = width / Room.WIDTH / TILE_SIZE;
+        float h = height / Room.HEIGHT / TILE_SIZE;
         return Math.min(w, h);
     }
 

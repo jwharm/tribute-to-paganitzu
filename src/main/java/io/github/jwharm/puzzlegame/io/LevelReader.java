@@ -16,15 +16,15 @@ public class LevelReader {
         data = FileIO.readFile(filename);
     }
 
-    public static Board get(int level) {
+    public static Room get(int level) {
         return readLevelsFile(data, level);
     }
 
-    private static Board readLevelsFile(byte[] data, int room) {
+    private static Room readLevelsFile(byte[] data, int room) {
         if (room < 1 || room > 20)
             throw new IllegalArgumentException("Invalid room number");
 
-        Board board = new Board();
+        Room board = new Room();
 
         // Skip the BASIC BSAVE/BLOAD header (7 bytes)
         int offset = 7;

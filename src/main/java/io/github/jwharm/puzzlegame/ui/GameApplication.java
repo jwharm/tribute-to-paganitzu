@@ -2,7 +2,7 @@ package io.github.jwharm.puzzlegame.ui;
 
 import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gobject.types.Types;
-import io.github.jwharm.puzzlegame.engine.Board;
+import io.github.jwharm.puzzlegame.engine.Room;
 import io.github.jwharm.puzzlegame.engine.Game;
 import io.github.jwharm.puzzlegame.engine.GameState;
 import io.github.jwharm.puzzlegame.io.ImageCache;
@@ -82,7 +82,7 @@ public class GameApplication extends Application {
     private Game loadLevel(int stage) throws IOException {
         ImageCache.init("C:/dev/PAGA1/PAGA1.012");
         LevelReader.init("C:/dev/PAGA1/PAGA1.007");
-        Board board = LevelReader.get(stage);
-        return new Game(board, new GameState());
+        Room room = LevelReader.get(stage);
+        return new Game(room, new GameState());
     }
 }
