@@ -41,8 +41,7 @@ public class LevelReader {
             for (int col = 0; col < 16; col++) {
                 int index = room * 193 + row * 16 + col + 1;
                 short id = buffer.get(index);
-                Tile tile = new Tile(toActorType(id), TileState.PASSIVE, toImage(id));
-
+                Tile tile = new Tile(id, toActorType(id), TileState.PASSIVE, toImage(id));
                 board.set(row, col, tile);
             }
         }
@@ -74,14 +73,10 @@ public class LevelReader {
     private static Image toImage(short id) {
         return switch(id) {
             case 0, 45, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82 -> EMPTY;
-            case 1 -> WALL_1;
-            case 2 -> WALL_2;
-            case 3 -> WALL_3;
-            case 4 -> WALL_4;
-            case 5 -> WALL_1;
-            case 6 -> WALL_2;
-            case 7 -> WALL_3;
-            case 8 -> WALL_4;
+            case 1, 5 -> WALL_1;
+            case 2, 6 -> WALL_2;
+            case 3, 7 -> WALL_3;
+            case 4, 8 -> WALL_4;
             case 9 -> KEY;
             case 10 -> GEM_1;
             case 11 -> BOULDER;

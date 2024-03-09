@@ -70,7 +70,7 @@ public class SpiderMove implements Transition {
         game.board().set(
                 spider.row(),
                 spider.col(),
-                new Tile(ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY)
+                new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY)
         );
         // Spawn gems in all four directions: up, down, left and right
         for (var direction : Direction.values()) {

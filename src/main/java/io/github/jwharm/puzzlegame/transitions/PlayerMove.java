@@ -15,6 +15,11 @@ public class PlayerMove implements Transition {
     }
 
     @Override
+    public int priority() {
+        return 2;
+    }
+
+    @Override
     public Result run(Game game) {
         Tile target = game.board().get(player.position().move(direction));
         progress += 0.5f;

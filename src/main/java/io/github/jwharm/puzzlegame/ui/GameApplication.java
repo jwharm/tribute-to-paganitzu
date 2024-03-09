@@ -62,7 +62,7 @@ public class GameApplication extends Application {
     private GameWindow createWindow() {
         GameWindow win = GameWindow.create(this);
         try {
-            var game = loadRoom(1);
+            var game = loadRoom(4);
             win.setGame(game);
         } catch (IOException ioe) {
             ioe.printStackTrace();

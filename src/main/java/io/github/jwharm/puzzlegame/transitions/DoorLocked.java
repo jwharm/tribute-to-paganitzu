@@ -22,7 +22,7 @@ public class DoorLocked implements Transition {
                 return Result.CONTINUE;
 
         // Unlock the door
-        Tile unlocked = new Tile(ActorType.DOOR_UNLOCKED, TileState.ACTIVE, Image.LOCKED_DOOR);
+        Tile unlocked = new Tile(door.id(), ActorType.DOOR_UNLOCKED, TileState.ACTIVE, Image.LOCKED_DOOR);
         game.board().replace(door, unlocked);
         game.schedule(new DoorUnlocked(unlocked));
         return Result.DONE;

@@ -2,13 +2,23 @@ package io.github.jwharm.puzzlegame.engine;
 
 public class Tile {
 
-    public static final Tile OUT_OF_BOUNDS = new Tile(ActorType.OUT_OF_BOUNDS, TileState.PASSIVE, Image.EMPTY);
+    public static final Tile OUT_OF_BOUNDS = new Tile(
+            (short) 0,
+            ActorType.OUT_OF_BOUNDS,
+            TileState.PASSIVE,
+            Image.EMPTY
+    );
 
+    private final short id;
     private final ActorType type;
     private Image image;
     private int row, col;
     private TileState state;
     private Direction direction;
+
+    public short id() {
+        return id;
+    }
 
     public ActorType type() {
         return type;
@@ -64,7 +74,8 @@ public class Tile {
             };
     }
 
-    public Tile(ActorType type, TileState state, Image image) {
+    public Tile(short id, ActorType type, TileState state, Image image) {
+        this.id = id;
         this.type = type;
         this.state = state;
         this.image = image;

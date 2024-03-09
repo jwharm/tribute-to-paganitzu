@@ -15,6 +15,11 @@ public class BoulderMove implements Transition {
     }
 
     @Override
+    public int priority() {
+        return 1;
+    }
+
+    @Override
     public Result run(Game game) {
         Tile target = game.board().get(boulder.position().move(direction));
         progress += 0.5f;

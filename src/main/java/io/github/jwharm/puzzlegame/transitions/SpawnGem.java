@@ -23,8 +23,10 @@ public class SpawnGem extends Animation {
     public Result run(Game game) {
         Result result = super.run(game);
 
-        if (result == Result.DONE)
-            game.board().set(tile.row(), tile.row(), new Tile(ActorType.GEM, TileState.PASSIVE, Image.GEM_1));
+        if (result == Result.DONE) {
+            Tile gem = new Tile((short) 10, ActorType.GEM, TileState.PASSIVE, Image.GEM_1);
+            game.board().set(tile.row(), tile.row(), gem);
+        }
 
         return result;
     }

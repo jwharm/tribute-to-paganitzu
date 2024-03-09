@@ -11,7 +11,7 @@ import static io.github.jwharm.puzzlegame.ui.GamePaintable.TILE_SIZE;
 
 public class Game {
 
-    private record Event(int when, Transition transition) {}
+    private record Event(int when, Transition transition, int priority) {}
 
     /*
      * Random number generator used for randomly trigger gem animations
@@ -26,7 +26,7 @@ public class Game {
      */
     private final Queue<Event> transitions = new PriorityQueue<>(
             Comparator.comparing(Event::when)
-                      .thenComparing(e -> e.transition() instanceof PlayerMove));
+                      .thenComparing(Event::priority));
 
     // Global game state
     private final Room room;
@@ -138,7 +138,8 @@ public class Game {
     }
 
     private void consume(Room room, Tile target) {
-        room.replace(target, new Tile(ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY));
+        Tile empty = new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY);
+        room.replace(target, empty);
     }
 
     public void draw(Position position, Image image) {
@@ -158,11 +159,11 @@ public class Game {
     }
 
     public void schedule(Transition transition) {
-        transitions.add(new Event(ticks + 1, transition));
+        transitions.add(new Event(ticks + 1, transition, transition.priority()));
     }
 
     /**
-     * This will draw all tiles and run all scheduled transitions.
+     * Draw all tiles and run all scheduled transitions.
      */
     public void updateState() {
         ticks++;
