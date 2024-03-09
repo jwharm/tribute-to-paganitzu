@@ -91,8 +91,8 @@ public class GameWindow extends ApplicationWindow {
 
     private void updatePauseButton() {
         pauseButton.setIconName(game().paused()
-                ? "media-playback-start"
-                : "media-playback-pause"
+                ? "media-playback-start-symbolic"
+                : "media-playback-pause-symbolic"
         );
     }
 
