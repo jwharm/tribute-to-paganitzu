@@ -29,8 +29,8 @@ public class Game {
             Comparator.comparing(Event::when).thenComparing(Event::priority));
 
     // Global game state
-    private final Room room;
     private final GameState state;
+    private Room room;
     private int ticks = 0;
     private boolean paused = false;
     private boolean frozen = true;
@@ -40,6 +40,12 @@ public class Game {
     public Game(Room room, GameState state) {
         this.room = room;
         this.state = state;
+        schedule(new BoardReveal());
+    }
+
+    public void resetRoom() {
+        this.room = LevelReader.get(state().room());
+        transitions.clear();
         schedule(new BoardReveal());
     }
 
@@ -127,9 +133,8 @@ public class Game {
                 canMove = true;
             }
             case DOOR_UNLOCKED -> {
-                pause();
-                consume(room, target);
-                state().win();
+                state().goToNextRoom();
+                resetRoom();
             }
         }
 

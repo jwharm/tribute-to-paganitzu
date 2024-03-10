@@ -2,20 +2,17 @@ package io.github.jwharm.puzzlegame.engine;
 
 public class GameState {
 
-    private int level = 1, lives = 3, score = 0, bonus = 300;
-    private boolean won = false;
+    private int room = 1, lives = 3, score = 0, startScore = 0, bonus = 300;
 
-    public int level() {
-        return level;
+    public int room() {
+        return room;
     }
 
-    public void goToNextLevel() {
-        level++;
-        won = false;
-    }
-
-    public void win() {
-        won = true;
+    public void goToNextRoom() {
+        score += bonus;
+        startScore = score;
+        room++;
+        bonus = 300;
     }
 
     public int lives() {
@@ -24,6 +21,7 @@ public class GameState {
 
     public void die() {
         lives--;
+        score = startScore;
     }
 
     public void keyCollected() {

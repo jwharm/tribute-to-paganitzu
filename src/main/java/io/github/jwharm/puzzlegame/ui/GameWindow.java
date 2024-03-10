@@ -112,7 +112,7 @@ public class GameWindow extends ApplicationWindow {
             try {
                 int button = alert.chooseFinish(result);
                 if (button == 0) {
-                    Room room = LevelReader.get(game().state().level());
+                    Room room = LevelReader.get(game().state().room());
                     paintable.setGame(new Game(room, new GameState()));
                     return;
                 }
@@ -136,7 +136,7 @@ public class GameWindow extends ApplicationWindow {
     private void updateHeaderBar() {
         if (game() != null) {
             updatePauseButton();
-            levelLabel.setLabel("Room: " + game().state().level());
+            levelLabel.setLabel("Room: " + game().state().room());
             livesLabel.setLabel("Lives: " + game().state().lives());
             scoreLabel.setLabel("Score: " + game().state().score());
         }

@@ -20,7 +20,7 @@ import java.lang.foreign.MemorySegment;
 
 public class GameApplication extends Application {
 
-    private static final int FPS = 8;
+    private static final int FPS = 10;
 
     private static final Type gtype = Types.register(GameApplication.class);
 
@@ -69,6 +69,11 @@ public class GameApplication extends Application {
         }
         GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000 / FPS, () -> {
             updateGameState(win);
+            return true;
+        });
+        GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000, () -> {
+            if (!win.game().paused())
+                win.game().state().decreaseBonus();
             return true;
         });
         return win;

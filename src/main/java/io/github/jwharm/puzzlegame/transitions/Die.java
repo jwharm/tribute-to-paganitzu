@@ -4,6 +4,7 @@ import io.github.jwharm.puzzlegame.engine.Game;
 import io.github.jwharm.puzzlegame.engine.Image;
 import io.github.jwharm.puzzlegame.engine.Result;
 import io.github.jwharm.puzzlegame.engine.Tile;
+import io.github.jwharm.puzzlegame.io.LevelReader;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class Die extends Animation {
 
         // Pause the game when the animation is done
         if (result == Result.DONE)
-            game.pause();
+            game.resetRoom();
 
         return result;
     }
