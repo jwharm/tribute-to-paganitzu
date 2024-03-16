@@ -57,7 +57,7 @@ public class GameApplication extends Application {
 
     private GameWindow createWindow() {
         GameWindow win = GameWindow.create(this);
-        var game = new Game(new GameState(11, 5, 0));
+        var game = new Game(new GameState(1, 5, 0));
         win.setGame(game);
 
         GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000 / FPS, () -> {
