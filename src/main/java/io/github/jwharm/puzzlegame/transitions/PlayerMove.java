@@ -4,12 +4,12 @@ import io.github.jwharm.puzzlegame.engine.*;
 
 public class PlayerMove implements Transition {
 
-    private final Tile player;
+    private final Player player;
     private final Direction direction;
     private float progress = 0;
 
     public PlayerMove(Tile player, Direction direction) {
-        this.player = player;
+        this.player = (Player) player;
         this.direction = direction;
         player.setState(TileState.ACTIVE);
     }
@@ -21,16 +21,22 @@ public class PlayerMove implements Transition {
 
     @Override
     public Result run(Game game) {
-        Tile target = game.board().get(player.position().move(direction));
         progress += 0.5f;
         Position current = new Position(player.row(), player.col());
         if (progress < 1) {
+            Tile target = game.room().get(player.position().move(direction));
             game.draw(current.move(direction, progress), moveImage());
-            game.board().swap(player, target);
+            game.room().set(player.position(), player.current());
+            game.room().set(target.position(), player);
             return Result.CONTINUE;
         } else {
             game.draw(current, standImage());
             player.setState(TileState.PASSIVE);
+
+            // If the target is a warp tile, start a warp transition
+            if (player.current().type() == ActorType.WARP)
+                game.schedule(new Warp(player, game.room()));
+
             return Result.DONE;
         }
     }

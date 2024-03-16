@@ -18,12 +18,12 @@ public class DoorLocked implements Transition {
     public Result run(Game game) {
         // Check if all keys have been collected
         for (var position : keyLocations)
-            if (game.board().get(position).type() == ActorType.KEY)
+            if (game.room().get(position).type() == ActorType.KEY)
                 return Result.CONTINUE;
 
         // Unlock the door
         Tile unlocked = new Tile(door.id(), ActorType.DOOR_UNLOCKED, TileState.ACTIVE, Image.LOCKED_DOOR);
-        game.board().replace(door, unlocked);
+        game.room().replace(door, unlocked);
         game.schedule(new DoorUnlocked(unlocked));
         return Result.DONE;
     }

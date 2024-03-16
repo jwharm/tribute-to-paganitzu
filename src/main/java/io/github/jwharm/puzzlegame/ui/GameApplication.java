@@ -2,11 +2,8 @@ package io.github.jwharm.puzzlegame.ui;
 
 import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gobject.types.Types;
-import io.github.jwharm.puzzlegame.engine.Room;
 import io.github.jwharm.puzzlegame.engine.Game;
 import io.github.jwharm.puzzlegame.engine.GameState;
-import io.github.jwharm.puzzlegame.io.ImageCache;
-import io.github.jwharm.puzzlegame.io.LevelReader;
 import org.gnome.gio.ApplicationFlags;
 import org.gnome.gio.SimpleAction;
 import org.gnome.glib.GLib;
@@ -15,7 +12,6 @@ import org.gnome.gobject.GObject;
 import org.gnome.adw.Application;
 import org.gnome.gtk.Window;
 
-import java.io.IOException;
 import java.lang.foreign.MemorySegment;
 
 public class GameApplication extends Application {
@@ -61,21 +57,20 @@ public class GameApplication extends Application {
 
     private GameWindow createWindow() {
         GameWindow win = GameWindow.create(this);
-        try {
-            var game = loadRoom(1);
-            win.setGame(game);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        var game = new Game(new GameState(11, 5, 0));
+        win.setGame(game);
+
         GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000 / FPS, () -> {
             updateGameState(win);
             return true;
         });
+
         GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000, () -> {
-            if (!win.game().paused())
-                win.game().state().decreaseBonus();
+            if (! (game.frozen()))
+                game.state().decreaseBonus();
             return true;
         });
+
         return win;
     }
 
@@ -88,12 +83,5 @@ public class GameApplication extends Application {
             win.game().updateState();
             win.invalidateContents();
         }
-    }
-
-    private Game loadRoom(int r) throws IOException {
-        ImageCache.init("/home/jw/Documenten/PAGA1/PAGA1.012");
-        LevelReader.load("/home/jw/Documenten/PAGA1/PAGA1.007");
-        Room room = LevelReader.get(r);
-        return new Game(room, new GameState());
     }
 }

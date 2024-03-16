@@ -12,21 +12,11 @@ import static io.github.jwharm.puzzlegame.ui.GamePaintable.TILE_SIZE;
 
 public class Game {
 
-    private record Event(int when, Transition transition, int priority) {}
-
     /*
      * Random number generator used for randomly trigger gem animations
      * (sparkle effect).
      */
     private final Random RAND = new Random();
-
-    /*
-     * The queue on which all transitions are scheduled. It is ordered by the
-     * requested event time. When multiple events are scheduled in one frame,
-     * a `PlayerMove` event will be processed first.
-     */
-    private final Queue<Event> transitions = new PriorityQueue<>(
-            Comparator.comparing(Event::when).thenComparing(Event::priority));
 
     // Global game state
     private final GameState state;
@@ -34,32 +24,171 @@ public class Game {
     private int ticks = 0;
     private boolean paused = false;
     private boolean frozen = true;
-
+    private Direction moveDirection = null;
+    private final EventQueue eventQueue = new EventQueue();
     private final List<DrawCommand> drawCommands = new ArrayList<>();
 
-    public Game(Room room, GameState state) {
-        this.room = room;
+    public Game(GameState state) {
         this.state = state;
-        schedule(new BoardReveal());
+        schedule(new LoadRoom(false));
     }
 
-    public void resetRoom() {
+    /**
+     * Load the room from the levels file. This method is called at the start
+     * of the RevealRoom transition.
+     */
+    public void load() {
         this.room = LevelReader.get(state().room());
-        transitions.clear();
-        schedule(new BoardReveal());
+        room.printToStdOut();
     }
 
+    /**
+     * Schedule transitions for all actors in the room.
+     */
     public void scheduleTransitions(Room room) {
-        for (var tile : room.getAll())
-            switch(tile.type()) {
+        for (var tile : room.getAll()) {
+            switch (tile.type()) {
                 case DOOR_LOCKED -> schedule(new DoorLocked(tile, room.getAll(ActorType.KEY)));
                 case SNAKE -> schedule(new SnakeGuard(tile));
-                case SPIDER -> schedule(new SpiderMove(tile, Direction.RIGHT));
+                case SPIDER -> schedule(new SpiderMove(tile));
+                case SPIKES -> schedule(new SpikeGuard(tile));
                 case WATER -> schedule(new WaterFlow(tile));
             }
+        }
     }
 
-    public Room board() {
+    public void startMoving(Direction direction) {
+        this.moveDirection = direction;
+    }
+
+    public void stopMoving(Direction direction) {
+        if (this.moveDirection == direction)
+            this.moveDirection = null;
+    }
+
+    /**
+     * Move the player in the specified direction.
+     */
+    public void move() {
+        if (moveDirection == null || frozen())
+            return; // Not moving
+
+        Tile player = room.player();
+        if (player == null || player.state() == TileState.ACTIVE)
+            return;
+        Tile target = room.get(player.position().move(moveDirection));
+
+        // Face in left or right direction
+        if (moveDirection == Direction.LEFT || moveDirection == Direction.RIGHT)
+            player.setDirection(moveDirection);
+
+        // Determine if we can move in this direction
+        boolean canMove = switch(target.type()) {
+            case BOULDER -> {
+                Tile behind = room.get(target.position().move(moveDirection));
+                yield switch (behind.type()) {
+                    case EMPTY -> {
+                        schedule(new BoulderMove(target, behind, moveDirection), 0);
+                        yield true;
+                    }
+                    case WATER -> {
+                        schedule(new BoulderSplash(target, behind, moveDirection), 0);
+                        yield true;
+                    }
+                    default -> false;
+                };
+            }
+            case KEY -> {
+                state.keyCollected();
+                room.remove(target);
+                yield true;
+            }
+            case GEM -> {
+                state.gemCollected();
+                room.remove(target);
+                yield true;
+            }
+            case HIDDEN_PASSAGE -> {
+                schedule(new WallCrumble(target));
+                yield false;
+            }
+            case MUD -> {
+                room.remove(target);
+                yield true;
+            }
+            case DOOR_UNLOCKED -> {
+                freeze();
+                schedule(new LoadRoom(true));
+                yield false;
+            }
+            case EMPTY, WARP -> true;
+            default -> false;
+        };
+
+        if (canMove)
+            schedule(new PlayerMove(player, moveDirection), 0);
+    }
+
+    public void draw(Position position, Image image) {
+        draw(position.row(), position.col(), image);
+    }
+
+    public void draw(float row, float col, Image image) {
+        draw((cr) -> {
+            cr.setSource(ImageCache.get(image), col * TILE_SIZE, row * TILE_SIZE);
+            cr.getSource().setFilter(Filter.NEAREST);
+            cr.paint();
+        });
+    }
+
+    public void draw(DrawCommand cmd) {
+        drawCommands.add(cmd);
+    }
+
+    public void schedule(Transition transition) {
+        schedule(transition, 1);
+    }
+
+    public void schedule(Transition transition, int delay) {
+        if (transition instanceof LoadRoom)
+            eventQueue.schedule(ticks + delay, transition);
+        else
+            room.eventQueue.schedule(ticks + delay, transition);
+    }
+
+    /**
+     * The "main loop" function of the game:
+     * Move the player, draw all tiles, and run all scheduled transitions.
+     */
+    public void updateState() {
+        ticks++;
+
+        move();
+
+        if (room != null) {
+            for (int row = 0; row < Room.HEIGHT; row++) {
+                for (int col = 0; col < Room.WIDTH; col++) {
+                    Tile tile = room().get(row, col);
+
+                    if (tile.state() == TileState.PASSIVE)
+                        tile.draw(this);
+
+                    // Gems sparkle randomly
+                    int GEM_SPARKLE_RANDOM_FACTOR = 40;
+                    if (!frozen()
+                            && tile.type() == ActorType.GEM
+                            && tile.state() == TileState.PASSIVE
+                            && RAND.nextInt(GEM_SPARKLE_RANDOM_FACTOR) == 0)
+                        schedule(new GemSparkle(tile));
+                }
+            }
+        }
+
+        eventQueue.runTransitions(ticks, this);
+        room.eventQueue.runTransitions(ticks, this);
+    }
+
+    public Room room() {
         return room;
     }
 
@@ -88,7 +217,7 @@ public class Game {
     }
 
     public boolean frozen() {
-        return frozen;
+        return frozen || paused;
     }
 
     public void freeze() {
@@ -97,103 +226,5 @@ public class Game {
 
     public void unfreeze() {
         frozen = false;
-    }
-
-    public void move(Direction direction) {
-        Tile player = room.player();
-        if (player.state() == TileState.ACTIVE)
-            return;
-        Tile target = room.get(player.position().move(direction));
-
-        // Face in left or right direction
-        if (direction == Direction.LEFT || direction == Direction.RIGHT)
-            player.setDirection(direction);
-
-        // Determine if we can move in this direction
-        boolean canMove = target.type() == ActorType.EMPTY;
-        switch(target.type()) {
-            case BOULDER -> {
-                if (room.get(target.position().move(direction)).type() == ActorType.EMPTY) {
-                    canMove = true;
-                    schedule(new BoulderMove(target, direction));
-                }
-            }
-            case KEY -> {
-                state().keyCollected();
-                consume(room, target);
-                canMove = true;
-            }
-            case GEM -> {
-                state().gemCollected();
-                consume(room, target);
-                canMove = true;
-            }
-            case MUD -> {
-                consume(room, target);
-                canMove = true;
-            }
-            case DOOR_UNLOCKED -> {
-                state().goToNextRoom();
-                resetRoom();
-            }
-        }
-
-        if (canMove)
-            schedule(new PlayerMove(player, direction));
-    }
-
-    private void consume(Room room, Tile target) {
-        target.setState(TileState.REMOVED);
-        Tile empty = new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY);
-        room.replace(target, empty);
-    }
-
-    public void draw(Position position, Image image) {
-        draw(position.row(), position.col(), image);
-    }
-
-    public void draw(DrawCommand cmd) {
-        drawCommands.add(cmd);
-    }
-
-    public void draw(float row, float col, Image image) {
-        drawCommands.add((cr) -> {
-            cr.setSource(ImageCache.get(image), col * TILE_SIZE, row * TILE_SIZE);
-            cr.getSource().setFilter(Filter.NEAREST);
-            cr.paint();
-        });
-    }
-
-    public void schedule(Transition transition) {
-        transitions.add(new Event(ticks + 1, transition, transition.priority()));
-    }
-
-    /**
-     * Draw all tiles and run all scheduled transitions.
-     */
-    public void updateState() {
-        ticks++;
-        for (int row = 0; row < Room.HEIGHT; row++) {
-            for (int col = 0; col < Room.WIDTH; col++) {
-                Tile tile = board().get(row, col);
-
-                if (tile.state() == TileState.PASSIVE)
-                    tile.draw(this);
-
-                // Gems sparkle randomly
-                int GEM_SPARKLE_RANDOM_FACTOR = 20;
-                if (!paused()
-                        && tile.type() == ActorType.GEM
-                        && tile.state() == TileState.PASSIVE
-                        && RAND.nextInt(GEM_SPARKLE_RANDOM_FACTOR) == 0)
-                    schedule(new GemSparkle(tile));
-            }
-        }
-
-        while (!transitions.isEmpty() && transitions.peek().when() <= ticks) {
-            var transition = transitions.poll().transition();
-            if (transition.run(this) == Result.CONTINUE)
-                schedule(transition);
-        }
     }
 }

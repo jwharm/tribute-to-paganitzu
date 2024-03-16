@@ -2,14 +2,14 @@ package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
-public class BoulderMove implements Transition {
+public class BoulderSplash implements Transition {
 
     private final Tile boulder;
     private final Tile target;
     private final Direction direction;
     private float progress = 0;
 
-    public BoulderMove(Tile boulder, Tile target, Direction direction) {
+    public BoulderSplash(Tile boulder, Tile target, Direction direction) {
         this.boulder = boulder;
         this.target = target;
         this.direction = direction;
@@ -24,14 +24,14 @@ public class BoulderMove implements Transition {
     @Override
     public Result run(Game game) {
         progress += 0.5f;
-        Position current = new Position(boulder.row(), boulder.col());
         if (progress < 1) {
-            game.draw(current.move(direction, progress), Image.BOULDER);
-            game.room().swap(boulder, target);
+            game.room().remove(boulder);
+            Position current = boulder.position().move(direction, progress);
+            game.draw(current, Image.BOULDER);
             return Result.CONTINUE;
         } else {
-            game.draw(current, Image.BOULDER);
-            boulder.setState(TileState.PASSIVE);
+            game.room().remove(target);
+            game.draw(target.position(), Image.BOULDER_SPLASH);
             return Result.DONE;
         }
     }

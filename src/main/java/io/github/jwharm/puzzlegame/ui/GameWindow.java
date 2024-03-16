@@ -5,7 +5,7 @@ import io.github.jwharm.javagi.base.Out;
 import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gobject.types.Types;
 import io.github.jwharm.puzzlegame.engine.*;
-import io.github.jwharm.puzzlegame.io.LevelReader;
+import io.github.jwharm.puzzlegame.transitions.LoadRoom;
 import org.gnome.adw.Application;
 import org.gnome.adw.ApplicationWindow;
 import org.gnome.adw.HeaderBar;
@@ -20,7 +20,7 @@ public class GameWindow extends ApplicationWindow {
 
     private static final Type gtype = Types.register(GameWindow.class);
 
-    private Label levelLabel, livesLabel, scoreLabel;
+    private Label levelLabel, livesLabel, scoreLabel, bonusLabel;
     private Button pauseButton;
     private GamePaintable paintable;
 
@@ -44,6 +44,7 @@ public class GameWindow extends ApplicationWindow {
     public void init() {
         var controller = new EventControllerKey();
         controller.onKeyPressed((keyVal, _, _) -> keyPressed(keyVal));
+        controller.onKeyReleased((keyVal, _, _) -> keyReleased(keyVal));
         this.addController(controller);
         this.onCloseRequest(() -> {
             this.getApplication().quit();
@@ -55,14 +56,16 @@ public class GameWindow extends ApplicationWindow {
         HeaderBar headerBar = new HeaderBar();
         pauseButton = Button.fromIconName("media-playback-pause");
         var resetButton = Button.fromIconName("view-refresh-symbolic");
-        levelLabel = new Label("Level: 0");
-        livesLabel = new Label("Lives: 0");
-        scoreLabel = new Label("Score: 0");
+        levelLabel = new Label("Level:  ");
+        livesLabel = new Label("Lives:  ");
+        scoreLabel = new Label("Score:  ");
+        bonusLabel = new Label("Bonus:  ");
         headerBar.packStart(pauseButton);
         headerBar.packStart(resetButton);
         headerBar.packStart(levelLabel);
         headerBar.packStart(livesLabel);
         headerBar.packStart(scoreLabel);
+        headerBar.packStart(bonusLabel);
         updateHeaderBar();
 
         Picture picture = Picture.builder()
@@ -111,13 +114,11 @@ public class GameWindow extends ApplicationWindow {
         alert.choose(this, null, (_, result, _) -> {
             try {
                 int button = alert.chooseFinish(result);
+                game().resume();
                 if (button == 0) {
-                    Room room = LevelReader.get(game().state().room());
-                    paintable.setGame(new Game(room, new GameState()));
-                    return;
+                    game().schedule(new LoadRoom(false));
                 }
             } catch (GErrorException ignored) {} // user clicked cancel
-            game().resume();
         });
     }
 
@@ -139,6 +140,7 @@ public class GameWindow extends ApplicationWindow {
             levelLabel.setLabel("Room: " + game().state().room());
             livesLabel.setLabel("Lives: " + game().state().lives());
             scoreLabel.setLabel("Score: " + game().state().score());
+            bonusLabel.setLabel("Bonus: " + game().state().bonus());
         }
     }
 
@@ -151,14 +153,22 @@ public class GameWindow extends ApplicationWindow {
     }
 
     public boolean keyPressed(int keyVal) {
-        if (game().paused() || game().frozen())
-            return true;
-
         switch(keyVal) {
-            case Gdk.KEY_Left -> game().move(Direction.LEFT);
-            case Gdk.KEY_Up -> game().move(Direction.UP);
-            case Gdk.KEY_Right -> game().move(Direction.RIGHT);
-            case Gdk.KEY_Down -> game().move(Direction.DOWN);
+            case Gdk.KEY_Left -> game().startMoving(Direction.LEFT);
+            case Gdk.KEY_Up -> game().startMoving(Direction.UP);
+            case Gdk.KEY_Right -> game().startMoving(Direction.RIGHT);
+            case Gdk.KEY_Down -> game().startMoving(Direction.DOWN);
+            default -> {}
+        }
+        return true;
+    }
+
+    public boolean keyReleased(int keyVal) {
+        switch(keyVal) {
+            case Gdk.KEY_Left -> game().stopMoving(Direction.LEFT);
+            case Gdk.KEY_Up -> game().stopMoving(Direction.UP);
+            case Gdk.KEY_Right -> game().stopMoving(Direction.RIGHT);
+            case Gdk.KEY_Down -> game().stopMoving(Direction.DOWN);
             default -> {}
         }
         return true;

@@ -34,7 +34,9 @@ public class SnakeGuard implements Transition {
 
     @Override
     public Result run(Game game) {
-        Tile player = game.board().player();
+        Tile player = game.room().player();
+        if (player == null)
+            return Result.CONTINUE;
 
         // Look left or right
         direction = switch(Integer.compare(player.col(), snake.col())) {
@@ -57,7 +59,7 @@ public class SnakeGuard implements Transition {
         int start = min(player.col(), snake.col()) + 1;
         int end = max(player.col(), snake.col());
         for (int col = start; col < end; col++)
-            if (game.board().get(player.row(), col).type() != ActorType.EMPTY)
+            if (game.room().get(player.row(), col).type() != ActorType.EMPTY)
                 return Result.CONTINUE;
 
         // Bite

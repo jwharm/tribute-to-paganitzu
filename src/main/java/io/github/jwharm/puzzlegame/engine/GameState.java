@@ -2,26 +2,31 @@ package io.github.jwharm.puzzlegame.engine;
 
 public class GameState {
 
-    private int room = 1, lives = 3, score = 0, startScore = 0, bonus = 300;
+    private static final int START_BONUS = 300;
+    private int room, lives, score, startScore, bonus;
 
-    public int room() {
-        return room;
+    public GameState(int room, int lives, int score) {
+        this.room = room;
+        this.lives = lives;
+        this.score = score;
+        this.startScore = 0;
+        this.bonus = START_BONUS;
     }
 
-    public void goToNextRoom() {
-        score += bonus;
-        startScore = score;
-        room++;
-        bonus = 300;
-    }
-
-    public int lives() {
-        return lives;
+    public void reset() {
+        score = startScore;
     }
 
     public void die() {
         lives--;
-        score = startScore;
+        bonus = START_BONUS;
+    }
+
+    public void roomCompleted() {
+        score += bonus;
+        startScore = score;
+        room++;
+        bonus = START_BONUS;
     }
 
     public void keyCollected() {
@@ -34,6 +39,14 @@ public class GameState {
 
     public void decreaseBonus() {
         bonus--;
+    }
+
+    public int room() {
+        return room;
+    }
+
+    public int lives() {
+        return lives;
     }
 
     public int score() {

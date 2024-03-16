@@ -15,6 +15,7 @@ public final class Room {
     public static final int HEIGHT = 12;
 
     private final Tile[][] tiles = new Tile[HEIGHT][WIDTH];
+    public final EventQueue eventQueue = new EventQueue();
 
     /**
      * Return the tile on the requested coordinates.
@@ -64,13 +65,19 @@ public final class Room {
      * Find the tile that the player is on.
      */
     public Tile player() {
-        return Objects.requireNonNull(getAny(ActorType.PLAYER));
+        return getAny(ActorType.PLAYER);
     }
 
     public void set(int row, int col, Tile tile) {
+        if (tile instanceof Player player)
+            player.setCurrent(tiles[row][col]);
+
         tiles[row][col] = tile;
-        tile.setRow(row);
-        tile.setCol(col);
+        tile.setPosition(row, col);
+    }
+
+    public void set(Position pos, Tile tile) {
+        set((int) pos.row(), (int) pos.col(), tile);
     }
 
     public void swap(Tile tile1, Tile tile2) {
@@ -80,6 +87,23 @@ public final class Room {
     }
 
     public void replace(Tile tile1, Tile tile2) {
+        tile1.setState(TileState.REMOVED);
         set(tile1.row(), tile1.col(), tile2);
+    }
+
+    public void remove(Tile tile) {
+        Tile empty = new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY);
+        replace(tile, empty);
+    }
+
+    /**
+     * Debug logging
+     */
+    public void printToStdOut() {
+        for (Tile[] row : tiles) {
+            for (Tile tile : row)
+                System.out.printf("%02d ", tile.id());
+            System.out.println();
+        }
     }
 }

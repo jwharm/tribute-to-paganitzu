@@ -26,15 +26,15 @@ public enum Image {
     SNAKE_LEFT_3(16),
     SNAKE_LEFT_4(17),
     KEY(18),
-    EMPTY(19),
-    EMPTY_20(20),
-    EMPTY_21(21),
-    EMPTY_22(22),
+    CRUMBLE_2(19),
+    CRUMBLE_3(20),
+    CRUMBLE_4(21),
+    CRUMBLE_5(22),
     SKULL_RIGHT(23),
     SKULL_LEFT(24),
     FLASH(25),
     MUD(26),
-    EMPTY_27(27),
+    EMPTY(27),
     BOULDER(28),
     BOULDER_SPLASH(29),
     GEM_1(30),
@@ -53,7 +53,7 @@ public enum Image {
     VENOM(43),
     VENOM_HIT_1(44),
     VENOM_HIT_2(45),
-    EMPTY_46(46),
+    CRUMBLE_1(46),
     WATER_5_1(47),
     WATER_5_2(48),
     WATER_7_1(49),
@@ -106,7 +106,12 @@ public enum Image {
     HIT_4(96),
     HIT_5(97),
     HIT_6(98),
-    HIT_7(99);
+    HIT_7(99),
+
+    /**
+     * Does not exist in the game data. Image is derived from {@link #SPIKES}.
+     */
+    SPIKE_BARS(100);
 
     private final int id;
 
@@ -119,7 +124,7 @@ public enum Image {
         return id;
     }
 
-    private Image(int id) {
+    Image(int id) {
         this.id = id;
     }
 }

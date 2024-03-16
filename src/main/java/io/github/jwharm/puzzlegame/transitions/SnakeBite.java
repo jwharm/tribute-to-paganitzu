@@ -17,8 +17,10 @@ public class SnakeBite implements Transition {
     public Result run(Game game) {
         col += Integer.signum(player.col() - snake.col());
         game.draw(snake.row(), col, Image.VENOM);
-        if (col != player.col()) return Result.CONTINUE;
-        game.schedule(new Die(player));
+        if (col != player.col())
+            return Result.CONTINUE;
+        game.state().die();
+        game.schedule(new Vaporize(player));
         return Result.DONE;
     }
 }

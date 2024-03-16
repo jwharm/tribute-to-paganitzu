@@ -11,6 +11,13 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Helper class to read images a Paganitzu data file.
+ * <p>
+ * Credits to user <a href="https://moddingwiki.shikadi.net/wiki/User:K1n9_Duk3">K1n9_Duk3</a>
+ * from the DOS Game Modding Wiki for documenting the
+ * <a href="https://moddingwiki.shikadi.net/wiki/Paganitzu_Graphics_Format">Paganitzu data file format</a>.
+ */
 public class TileReader {
 
     /**
@@ -53,14 +60,14 @@ public class TileReader {
 
                 // Convert EGA data to RGB values
                 for (int x = 0; x < width; x++) {
-                    int red   = bit(r, x) * 85 * (bit(i, x) + 1);
-                    int green = bit(g, x) * 85 * (bit(i, x) + 1);
-                    int blue  = bit(b, x) * 85 * (bit(i, x) + 1);
+                    int red   = (bit(r, x) * 170) + (bit(i, x) * 85);
+                    int green = (bit(g, x) * 170) + (bit(i, x) * 85);
+                    int blue  = (bit(b, x) * 170) + (bit(i, x) * 85);
 
                     // Adjust dark yellow to brown
                     // See https://en.wikipedia.org/wiki/Color_Graphics_Adapter#With_an_RGBI_monitor
-                    if (red == 85 && green == 85 && blue == 0)
-                        red = 170;
+                    if (red == 170 && green == 170 && blue == 0)
+                        green = 85;
 
                     int rgb24 = (red << 16) | (green << 8) | blue;
                     imgData.setAtIndex(ValueLayout.JAVA_INT, row * 16 + x, rgb24);
@@ -90,5 +97,27 @@ public class TileReader {
         // Extract the bit at the specified position
         byte targetByte = byteArray[byteIndex];
         return (targetByte >> bitIndex) & 0x01;
+    }
+
+    /**
+     * Generate a 16x16 RGB image that is used to draw bars below extended
+     * spikes. The image displays three vertical stripes with color #00AAAA
+     * ([r,g,b] = [0,170,170]) on pixel 4, 8 and 12 (zero-indexed) with a black
+     * background.
+     */
+    public static ImageSurface generateSpikeBarImage() {
+        // Create ImageSurface and get a pointer to the image data.
+        ImageSurface surface = ImageSurface.create(Format.RGB24, 16, 16);
+        MemorySegment imgData = surface.getData()
+                .reinterpret((long) surface.getStride() * surface.getHeight());
+
+        for (int row = 0; row < 16; row++) {
+            for (int x = 0; x < 16; x++) {
+                int color = (x > 0 && x % 4 == 0) ? 170 : 0;
+                int rgb24 = (color << 8) | color;
+                imgData.setAtIndex(ValueLayout.JAVA_INT, row * 16 + x, rgb24);
+            }
+        }
+        return surface;
     }
 }

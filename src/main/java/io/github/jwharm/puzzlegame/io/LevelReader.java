@@ -8,6 +8,13 @@ import java.nio.ShortBuffer;
 
 import static io.github.jwharm.puzzlegame.engine.Image.*;
 
+/**
+ * Helper class to read images a Paganitzu data file.
+ * <p>
+ * Credits to user <a href="https://moddingwiki.shikadi.net/wiki/User:K1n9_Duk3">K1n9_Duk3</a>
+ * from the DOS Game Modding Wiki for documenting the
+ * <a href="https://moddingwiki.shikadi.net/wiki/Paganitzu_Level_Format">Paganitzu data file format</a>.
+ */
 public class LevelReader {
 
     private static byte[] data;
@@ -16,15 +23,15 @@ public class LevelReader {
         data = FileIO.readFile(filename);
     }
 
-    public static Room get(int room) {
-        return readLevelsFile(data, room);
+    public static Room get(int id) {
+        return readLevelsFile(data, id);
     }
 
-    private static Room readLevelsFile(byte[] data, int room) {
-        if (room < 1 || room > 20)
+    private static Room readLevelsFile(byte[] data, int id) {
+        if (id < 1 || id > 20)
             throw new IllegalArgumentException("Invalid room number");
 
-        Room board = new Room();
+        Room room = new Room();
 
         // Skip the BASIC BSAVE/BLOAD header (7 bytes)
         int offset = 7;
@@ -39,14 +46,20 @@ public class LevelReader {
 
         for (int row = 0; row < 12; row++) {
             for (int col = 0; col < 16; col++) {
-                int index = room * 193 + row * 16 + col + 1;
-                short id = buffer.get(index);
-                Tile tile = new Tile(id, toActorType(id), TileState.PASSIVE, toImage(id));
-                board.set(row, col, tile);
+                int index = id * 193 + row * 16 + col + 1;
+                short t = buffer.get(index);
+                ActorType type = toActorType(t);
+                if (type == ActorType.PLAYER) {
+                    // Empty tile "below" the player tile
+                    room.set(row, col, new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY));
+                    room.set(row, col, new Player(t, toActorType(t), TileState.PASSIVE, toImage(t)));
+                } else {
+                    room.set(row, col, new Tile(t, toActorType(t), TileState.PASSIVE, toImage(t)));
+                }
             }
         }
 
-        return board;
+        return room;
     }
 
     private static ActorType toActorType(short id) {

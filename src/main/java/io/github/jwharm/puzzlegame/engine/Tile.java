@@ -16,6 +16,14 @@ public class Tile {
     private TileState state;
     private Direction direction;
 
+    public Tile(short id, ActorType type, TileState state, Image image) {
+        this.id = id;
+        this.type = type;
+        this.state = state;
+        this.image = image;
+        this.direction = Direction.RIGHT;
+    }
+
     public short id() {
         return id;
     }
@@ -52,11 +60,8 @@ public class Tile {
         game.draw(row, col, image);
     }
 
-    public void setRow(int row) {
+    public void setPosition(int row, int col) {
         this.row = row;
-    }
-
-    public void setCol(int col) {
         this.col = col;
     }
 
@@ -74,11 +79,9 @@ public class Tile {
             };
     }
 
-    public Tile(short id, ActorType type, TileState state, Image image) {
-        this.id = id;
-        this.type = type;
-        this.state = state;
-        this.image = image;
-        this.direction = Direction.RIGHT;
+    @Override
+    public String toString() {
+        return "Tile %d,%d type=%s id=%d state=%s image=%s direction=%s"
+                .formatted(row, col, type, id, state, image, direction);
     }
 }

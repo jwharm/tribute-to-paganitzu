@@ -48,9 +48,9 @@ public class GamePaintable extends GObject implements Paintable {
 
             cr.scale(scaling, scaling);
 
-            for (var cmd : game.drawCommands()) {
+            for (var cmd : game.drawCommands())
                 cmd.draw(cr);
-            }
+
             game.drawCommands().clear();
         }
     }
