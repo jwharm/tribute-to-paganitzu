@@ -2,6 +2,10 @@ package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
+/**
+ * The BoulderMove transition will move a boulder (large round stone) one
+ * position in the specified direction.
+ */
 public class BoulderMove implements Transition {
 
     private final Tile boulder;
@@ -16,6 +20,10 @@ public class BoulderMove implements Transition {
         boulder.setState(TileState.ACTIVE);
     }
 
+    /**
+     * This transition has higher priority compared to other transitions. This
+     * is necessary when trying to trap a moving spider.
+     */
     @Override
     public int priority() {
         return 1;

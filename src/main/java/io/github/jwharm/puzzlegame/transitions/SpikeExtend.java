@@ -2,6 +2,12 @@ package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
+/**
+ * The SpikeExtend transition will "extend" the spikes up towards the player,
+ * one tile per frame. When the player is reached, the {@link Impale}
+ * transition is triggered. The gameplay is not frozen during this transition:
+ * the spikes can be evaded if the player moves fast enough.
+ */
 public class SpikeExtend implements Transition {
 
     private final Tile spike;

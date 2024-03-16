@@ -2,6 +2,9 @@ package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
+/**
+ * This transition moves the player to an adjacent tile.
+ */
 public class PlayerMove implements Transition {
 
     private final Player player;
@@ -14,6 +17,11 @@ public class PlayerMove implements Transition {
         player.setState(TileState.ACTIVE);
     }
 
+    /**
+     * Player movement will run before all other transitions, except the
+     * BoulderMove transition (the stone is pushed ahead, before the player
+     * moves into its place).
+     */
     @Override
     public int priority() {
         return 2;

@@ -1,10 +1,6 @@
 package io.github.jwharm.puzzlegame.transitions;
 
-import io.github.jwharm.puzzlegame.engine.Game;
-import io.github.jwharm.puzzlegame.engine.Image;
-import io.github.jwharm.puzzlegame.engine.Result;
-import io.github.jwharm.puzzlegame.engine.Tile;
-import io.github.jwharm.puzzlegame.io.LevelReader;
+import io.github.jwharm.puzzlegame.engine.*;
 
 import java.util.List;
 

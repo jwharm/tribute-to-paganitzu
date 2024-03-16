@@ -5,6 +5,10 @@ import org.freedesktop.cairo.Operator;
 
 import static io.github.jwharm.puzzlegame.ui.GamePaintable.TILE_SIZE;
 
+/**
+ * The DoorUnlocked transition will alert the player that the door is open (all
+ * keys have been collected).
+ */
 public class DoorUnlocked implements Transition {
 
     private final Tile door;
@@ -23,7 +27,11 @@ public class DoorUnlocked implements Transition {
              */
             cr.setSourceRGB(1, 1, 1)
               .setOperator(Operator.DIFFERENCE)
-              .rectangle(door.col() * TILE_SIZE, door.row() * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+              .rectangle(
+                      door.col() * TILE_SIZE,
+                      door.row() * TILE_SIZE,
+                      TILE_SIZE,
+                      TILE_SIZE)
               .clip()
               .paint();
         });

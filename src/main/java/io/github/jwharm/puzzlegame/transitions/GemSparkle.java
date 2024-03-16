@@ -1,5 +1,6 @@
 package io.github.jwharm.puzzlegame.transitions;
 
+import io.github.jwharm.puzzlegame.engine.Animation;
 import io.github.jwharm.puzzlegame.engine.Image;
 import io.github.jwharm.puzzlegame.engine.Tile;
 

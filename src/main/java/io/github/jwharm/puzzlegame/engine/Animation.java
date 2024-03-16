@@ -1,4 +1,4 @@
-package io.github.jwharm.puzzlegame.transitions;
+package io.github.jwharm.puzzlegame.engine;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
@@ -9,9 +9,10 @@ import java.util.stream.Stream;
 
 /**
  * Given a list of images, this class will display them one by one sequentially
- * with a provided delay between them. If the `loop` argument is set, the
+ * with a provided delay in between. If the {@code loop} argument is set, the
  * iterator will rewind to the first image and keep looping infinitely.
- * Otherwise, the animation will stop (return Result.DONE) after one iteration.
+ * Otherwise, the animation will stop (return {@link Result#DONE}) after one
+ * iteration.
  */
 public class Animation implements Transition {
 

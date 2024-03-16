@@ -8,28 +8,41 @@ import static io.github.jwharm.puzzlegame.engine.Image.*;
 import static java.lang.Math.min;
 import static java.lang.Math.max;
 
+/**
+ * Turn the snake in the player's direction, play the animation, and when the
+ * player is right in front, spit venom (the {@link SnakeBite} animation).
+ */
 public class SnakeGuard implements Transition {
 
-    private final Tile snake;
-    private Direction direction = Direction.RIGHT; // When player starts exactly above/below snake, look right
+    private final static int DELAY = 1;
+    private final static boolean LOOP = true;
 
+    private final Tile snake;
     private final Animation animateLeft, animateRight;
 
     public SnakeGuard(Tile snake) {
         this.snake = snake;
         this.snake.setState(TileState.ACTIVE);
         this.animateLeft = new Animation(
-                1,
+                DELAY,
                 snake,
-                List.of(SNAKE_LEFT_1, SNAKE_LEFT_2, SNAKE_LEFT_3, SNAKE_LEFT_4, SNAKE_LEFT_3, SNAKE_LEFT_2),
-                true
-        );
+                List.of(SNAKE_LEFT_1,
+                        SNAKE_LEFT_2,
+                        SNAKE_LEFT_3,
+                        SNAKE_LEFT_4,
+                        SNAKE_LEFT_3,
+                        SNAKE_LEFT_2),
+                LOOP);
         this.animateRight = new Animation(
-                1,
+                DELAY,
                 snake,
-                List.of(SNAKE_RIGHT_1, SNAKE_RIGHT_2, SNAKE_RIGHT_3, SNAKE_RIGHT_4, SNAKE_RIGHT_3, SNAKE_RIGHT_2),
-                true
-        );
+                List.of(SNAKE_RIGHT_1,
+                        SNAKE_RIGHT_2,
+                        SNAKE_RIGHT_3,
+                        SNAKE_RIGHT_4,
+                        SNAKE_RIGHT_3,
+                        SNAKE_RIGHT_2),
+                LOOP);
     }
 
     @Override
@@ -39,17 +52,20 @@ public class SnakeGuard implements Transition {
             return Result.CONTINUE;
 
         // Look left or right
-        direction = switch(Integer.compare(player.col(), snake.col())) {
+        snake.setDirection(switch(Integer.compare(player.col(), snake.col())) {
             case -1 -> Direction.LEFT;
             case +1 -> Direction.RIGHT;
-            default -> direction;
-        };
+            default -> snake.direction();
+        });
 
         // Draw next animation frame
-        if (direction == Direction.LEFT)
+        if (snake.direction() == Direction.LEFT)
             animateLeft.run(game);
         else
             animateRight.run(game);
+
+        if (game.frozen())
+            return Result.CONTINUE;
 
         // If not on same row, continue
         if (player.row() != snake.row())
@@ -62,10 +78,9 @@ public class SnakeGuard implements Transition {
             if (game.room().get(player.row(), col).type() != ActorType.EMPTY)
                 return Result.CONTINUE;
 
-        // Bite
+        // Bite (shoot a venomous bolt towards the player)
         game.freeze();
         game.schedule(new SnakeBite(snake, player));
-        snake.setState(TileState.PASSIVE);
-        return Result.DONE;
+        return Result.CONTINUE;
     }
 }
