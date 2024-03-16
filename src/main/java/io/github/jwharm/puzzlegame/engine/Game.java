@@ -53,6 +53,11 @@ public class Game {
                 case SPIDER -> schedule(new SpiderMove(tile));
                 case SPIKES -> schedule(new SpikeGuard(tile));
                 case WATER -> schedule(new WaterFlow(tile));
+                case PIPE -> {
+                    // Tile ids 25 & 26 are pipe endings with flowing water
+                    if (tile.id() == 25 || tile.id() == 26)
+                        schedule(new WaterFlow(tile));
+                }
             }
         }
     }
