@@ -23,7 +23,7 @@ public final class Room {
     public Tile get(int row, int col) {
         return row >= 0 && col >= 0 && row < HEIGHT && col < WIDTH
                 ? tiles[row][col]
-                : Tile.OUT_OF_BOUNDS;
+                : Tile.createOutOfBounds();
     }
 
     /**
@@ -92,8 +92,7 @@ public final class Room {
     }
 
     public void remove(Tile tile) {
-        Tile empty = new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY);
-        replace(tile, empty);
+        replace(tile, Tile.createEmpty());
     }
 
     /**

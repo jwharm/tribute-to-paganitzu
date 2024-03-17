@@ -51,7 +51,7 @@ public class LevelReader {
                 ActorType type = toActorType(t);
                 if (type == ActorType.PLAYER) {
                     // Empty tile "below" the player tile
-                    room.set(row, col, new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY));
+                    room.set(row, col, Tile.createEmpty());
                     room.set(row, col, new Player(t, toActorType(t), TileState.PASSIVE, toImage(t)));
                 } else {
                     room.set(row, col, new Tile(t, toActorType(t), TileState.PASSIVE, toImage(t)));

@@ -2,12 +2,17 @@ package io.github.jwharm.puzzlegame.engine;
 
 public class Tile {
 
-    public static final Tile OUT_OF_BOUNDS = new Tile(
-            (short) 0,
-            ActorType.OUT_OF_BOUNDS,
-            TileState.PASSIVE,
-            Image.EMPTY
-    );
+    public static Tile createOutOfBounds() {
+        return new Tile((short) 0, ActorType.OUT_OF_BOUNDS, TileState.PASSIVE, Image.EMPTY);
+    }
+
+    public static Tile createEmpty() {
+        return new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY);
+    }
+
+    public static Tile createGem() {
+        return new Tile((short) 10, ActorType.GEM, TileState.PASSIVE, Image.GEM_1);
+    }
 
     private final short id;
     private final ActorType type;

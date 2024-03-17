@@ -163,7 +163,7 @@ public class GameWindow extends ApplicationWindow {
         return true;
     }
 
-    public boolean keyReleased(int keyVal) {
+    public void keyReleased(int keyVal) {
         switch(keyVal) {
             case Gdk.KEY_Left -> game().stopMoving(Direction.LEFT);
             case Gdk.KEY_Up -> game().stopMoving(Direction.UP);
@@ -171,6 +171,5 @@ public class GameWindow extends ApplicationWindow {
             case Gdk.KEY_Down -> game().stopMoving(Direction.DOWN);
             default -> {}
         }
-        return true;
     }
 }

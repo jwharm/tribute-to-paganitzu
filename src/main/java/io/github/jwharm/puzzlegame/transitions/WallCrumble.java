@@ -34,12 +34,10 @@ public class WallCrumble extends Animation {
             game.unfreeze();
 
             // Spawn new tile when the animation is done
-            if (tile.id() == 5 || tile.id() == 6) {
-                Tile replacement = new Tile((short) 10, ActorType.GEM, TileState.PASSIVE, Image.GEM_1);
-                game.room().replace(tile, replacement);
-            } else {
+            if (tile.id() == 5 || tile.id() == 6)
+                game.room().replace(tile, Tile.createGem());
+            else
                 game.room().remove(tile);
-            }
         }
 
         return result;

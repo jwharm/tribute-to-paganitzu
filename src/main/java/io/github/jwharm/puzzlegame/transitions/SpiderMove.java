@@ -84,20 +84,14 @@ public class SpiderMove implements Transition {
         return false;
     }
 
-    // Remove the spider from the room and spawn gems around its position
+    // Remove the spider and spawn gems on and around its position
     private void explode(Game game) {
-        game.room().set(
-                spider.row(),
-                spider.col(),
-                new Tile((short) 0, ActorType.EMPTY, TileState.PASSIVE, Image.EMPTY)
-        );
+        game.schedule(new Spawn(spider, Tile.createGem()));
         // Spawn gems in all four directions: up, down, left and right
         for (var direction : Direction.values()) {
             Tile tile = game.room().get(spider.position().move(direction));
-            if (turnIntoGem(tile)) {
-                Tile gem = new Tile((short) 10, ActorType.GEM, TileState.PASSIVE, Image.GEM_1);
-                game.schedule(new Spawn(tile, gem));
-            }
+            if (turnIntoGem(tile))
+                game.schedule(new Spawn(tile, Tile.createGem()));
         }
     }
 
