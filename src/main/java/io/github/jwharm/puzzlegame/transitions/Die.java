@@ -1,6 +1,7 @@
 package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
+import io.github.jwharm.puzzlegame.ui.Messages;
 
 import java.util.List;
 
@@ -25,8 +26,10 @@ public class Die extends Animation {
         var result = super.run(game);
 
         // Reset the game when the animation is done
-        if (result == Result.DONE)
+        if (result == Result.DONE) {
+            game.state().showMessage(Messages.PLAYER_DIED);
             game.schedule(new LoadRoom(false));
+        }
 
         return result;
     }

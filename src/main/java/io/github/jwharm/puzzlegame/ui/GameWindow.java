@@ -9,6 +9,7 @@ import io.github.jwharm.puzzlegame.transitions.LoadRoom;
 import org.gnome.adw.Application;
 import org.gnome.adw.ApplicationWindow;
 import org.gnome.adw.HeaderBar;
+import org.gnome.adw.MessageDialog;
 import org.gnome.gdk.Gdk;
 import org.gnome.glib.Type;
 import org.gnome.gobject.GObject;
@@ -123,6 +124,8 @@ public class GameWindow extends ApplicationWindow {
     }
 
     public void update() {
+        if (game().state().message() != null)
+            displayMessage();
         paintable.invalidateContents();
         updateHeaderBar();
     }
@@ -142,6 +145,19 @@ public class GameWindow extends ApplicationWindow {
                 ? "media-playback-start-symbolic"
                 : "media-playback-pause-symbolic"
         );
+    }
+
+    private void displayMessage() {
+        game().pause();
+        String message = game().state().message();
+        MessageDialog dialog = new MessageDialog(this, null, message);
+        dialog.addResponse("continue", "Continue");
+        dialog.setDefaultResponse("continue");
+        dialog.onResponse(null, _ -> {
+            game().state().hideMessage();
+            game().resume();
+        });
+        dialog.present();
     }
 
     public boolean keyPressed(int keyVal) {

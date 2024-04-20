@@ -4,6 +4,7 @@ import io.github.jwharm.puzzlegame.io.ImageCache;
 import io.github.jwharm.puzzlegame.io.LevelReader;
 import io.github.jwharm.puzzlegame.transitions.*;
 import io.github.jwharm.puzzlegame.ui.DrawCommand;
+import io.github.jwharm.puzzlegame.ui.Messages;
 import org.freedesktop.cairo.Filter;
 import org.gnome.glib.GLib;
 
@@ -23,9 +24,12 @@ public class Game {
     private final GameState state;
     private Room room;
     private int ticks = 0;
-    private boolean paused = false;
-    private boolean frozen = true;
+
+    private boolean paused = false; // Game is paused
+    private boolean frozen = true;  // Player is not allowed to move
+
     private Direction moveDirection = null;
+
     private final EventQueue eventQueue = new EventQueue();
     private final List<DrawCommand> drawCommands = new ArrayList<>();
 
@@ -47,6 +51,7 @@ public class Game {
      */
     public void load() {
         this.room = LevelReader.get(state().room());
+        this.moveDirection = null;
         room.printToStdOut();
     }
 
@@ -70,7 +75,9 @@ public class Game {
         }
         // Room-specific transitions
         if (state().room() == 16)
-            schedule(new Trigger(ActorType.BOULDER, new Position(4, 1), new WallMove()));
+            schedule(new Trigger(ActorType.BOULDER,
+                                 new Position(4, 1),
+                                 new WallMove()));
     }
 
     public void startMoving(Direction direction) {
@@ -134,6 +141,8 @@ public class Game {
             }
             case DOOR_UNLOCKED -> {
                 freeze();
+                state().showMessage(Messages.LEVEL_COMPLETED
+                        .formatted(state().bonus()));
                 schedule(new LoadRoom(true));
                 yield false;
             }
