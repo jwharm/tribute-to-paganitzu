@@ -17,7 +17,7 @@ idea {
 }
 
 dependencies {
-    implementation 'io.github.jwharm.javagi:adw:0.9.0'
+    implementation 'io.github.jwharm.javagi:adw:0.10.0'
     implementation 'io.github.jwharm.cairobindings:cairo:1.18.2'
 }
 
@@ -34,7 +34,7 @@ tasks.named('compileJava', JavaCompile) {
 tasks.named('run', JavaExec) {
     jvmArgs += '--enable-preview'
     jvmArgs += '--enable-native-access=ALL-UNNAMED'
-    jvmArgs += '-Djava.library.path=C:/dev/msys64/mingw64/bin'
+    jvmArgs += "-Djava.library.path=/usr/lib64:/lib64:/lib:/usr/lib:/lib/x86_64-linux-gnu"
 }
 
 application {
