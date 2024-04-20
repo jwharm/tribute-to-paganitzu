@@ -45,7 +45,7 @@ public class Game {
     /**
      * Schedule transitions for all actors in the room.
      */
-    public void scheduleTransitions(Room room) {
+    public void scheduleTransitions() {
         for (var tile : room.getAll()) {
             switch (tile.type()) {
                 case DOOR_LOCKED -> schedule(new DoorLocked(tile, room.getAll(ActorType.KEY)));
@@ -60,6 +60,9 @@ public class Game {
                 }
             }
         }
+        // Room-specific transitions
+        if (state().room() == 16)
+            schedule(new Trigger(ActorType.BOULDER, new Position(4, 1), new WallMove()));
     }
 
     public void startMoving(Direction direction) {

@@ -2,6 +2,10 @@ package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
+/**
+ * Push a boulder into a water tile. The boulder will disappear, and the water
+ * will be replaced by an empty tile.
+ */
 public class BoulderSplash implements Transition {
 
     private final Tile boulder;

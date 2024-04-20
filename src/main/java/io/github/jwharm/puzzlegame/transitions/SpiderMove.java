@@ -47,6 +47,9 @@ public class SpiderMove implements Transition {
 
     @Override
     public Result run(Game game) {
+        if (game.frozen())
+            return Result.CONTINUE;
+
         progress += 0.5f;
         Position current = new Position(spider.row(), spider.col());
 

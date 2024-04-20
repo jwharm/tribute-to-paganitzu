@@ -1,7 +1,5 @@
 package io.github.jwharm.puzzlegame.engine;
 
-import io.github.jwharm.puzzlegame.engine.*;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;

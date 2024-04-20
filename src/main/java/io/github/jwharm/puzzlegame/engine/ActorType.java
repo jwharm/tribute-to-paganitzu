@@ -35,11 +35,4 @@ public enum ActorType {
         for (ActorType a : values()) if (a.id == id) return a;
         throw new NoSuchElementException();
     }
-
-    public TileState defaultTileState() {
-        return switch(this) {
-            case SNAKE, SPIDER, WATER -> TileState.ACTIVE;
-            default -> TileState.PASSIVE;
-        };
-    }
 }

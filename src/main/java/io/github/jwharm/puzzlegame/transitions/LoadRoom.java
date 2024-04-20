@@ -57,7 +57,7 @@ public class LoadRoom implements Transition {
         }
 
         if (result == Result.DONE && transition instanceof Spawn) {
-            game.scheduleTransitions(game.room());
+            game.scheduleTransitions();
             game.unfreeze();
         }
 

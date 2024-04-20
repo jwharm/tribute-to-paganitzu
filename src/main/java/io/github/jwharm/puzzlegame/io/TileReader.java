@@ -106,11 +106,12 @@ public class TileReader {
      * background.
      */
     public static ImageSurface generateSpikeBarImage() {
-        // Create ImageSurface and get a pointer to the image data.
+        // Create ImageSurface and get a pointer to the image data
         ImageSurface surface = ImageSurface.create(Format.RGB24, 16, 16);
         MemorySegment imgData = surface.getData()
                 .reinterpret((long) surface.getStride() * surface.getHeight());
 
+        // Draw the vertical lines
         for (int row = 0; row < 16; row++) {
             for (int x = 0; x < 16; x++) {
                 int color = (x > 0 && x % 4 == 0) ? 170 : 0;

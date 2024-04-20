@@ -1,5 +1,7 @@
 package io.github.jwharm.puzzlegame.engine;
 
+import io.github.jwharm.puzzlegame.io.TileReader;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -109,7 +111,8 @@ public enum Image {
     HIT_7(99),
 
     /**
-     * Does not exist in the game data. Image is derived from {@link #SPIKES}.
+     * Does not exist in the game data. Image is generated in
+     * {@link TileReader#generateSpikeBarImage()}
      */
     SPIKE_BARS(100);
 
