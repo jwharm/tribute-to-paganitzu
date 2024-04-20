@@ -168,6 +168,7 @@ public class Game {
     public void updateState() {
         ticks++;
 
+        // Move the player
         move();
 
         if (room != null) {
@@ -175,6 +176,7 @@ public class Game {
                 for (int col = 0; col < Room.WIDTH; col++) {
                     Tile tile = room().get(row, col);
 
+                    // Draw passive tile images
                     if (tile.state() == TileState.PASSIVE)
                         tile.draw(this);
 
@@ -189,6 +191,7 @@ public class Game {
             }
         }
 
+        // Run transitions (draws active tile images)
         eventQueue.runTransitions(ticks, this);
         room.eventQueue.runTransitions(ticks, this);
     }
