@@ -1,8 +1,8 @@
 package io.github.jwharm.puzzlegame.engine;
 
 /**
- * This transition will wait until the requested type is in the designated spot, to
- * trigger a transition event.
+ * This transition will wait until the requested type is in the designated spot,
+ * to trigger a transition event.
  */
 public class Trigger implements Transition {
 

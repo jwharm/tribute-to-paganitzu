@@ -122,14 +122,7 @@ public class GameWindow extends ApplicationWindow {
         });
     }
 
-    private void updatePauseButton() {
-        pauseButton.setIconName(game().paused()
-                ? "media-playback-start-symbolic"
-                : "media-playback-pause-symbolic"
-        );
-    }
-
-    public void invalidateContents() {
+    public void update() {
         paintable.invalidateContents();
         updateHeaderBar();
     }
@@ -144,12 +137,11 @@ public class GameWindow extends ApplicationWindow {
         }
     }
 
-    public void setGame(Game game) {
-        paintable.setGame(game);
-    }
-
-    public Game game() {
-        return paintable.game();
+    private void updatePauseButton() {
+        pauseButton.setIconName(game().paused()
+                ? "media-playback-start-symbolic"
+                : "media-playback-pause-symbolic"
+        );
     }
 
     public boolean keyPressed(int keyVal) {
@@ -171,5 +163,13 @@ public class GameWindow extends ApplicationWindow {
             case Gdk.KEY_Down -> game().stopMoving(Direction.DOWN);
             default -> {}
         }
+    }
+
+    public Game game() {
+        return paintable.game();
+    }
+
+    public void setGame(Game game) {
+        paintable.setGame(game);
     }
 }

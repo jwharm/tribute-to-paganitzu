@@ -65,12 +65,6 @@ public class GameApplication extends Application {
             return true;
         });
 
-        GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000, () -> {
-            if (! (game.frozen()))
-                game.state().decreaseBonus();
-            return true;
-        });
-
         return win;
     }
 
@@ -81,7 +75,7 @@ public class GameApplication extends Application {
     private void updateGameState(GameWindow win) {
         if (!win.game().paused()) {
             win.game().updateState();
-            win.invalidateContents();
+            win.update();
         }
     }
 }

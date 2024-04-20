@@ -5,6 +5,7 @@ import io.github.jwharm.puzzlegame.io.LevelReader;
 import io.github.jwharm.puzzlegame.transitions.*;
 import io.github.jwharm.puzzlegame.ui.DrawCommand;
 import org.freedesktop.cairo.Filter;
+import org.gnome.glib.GLib;
 
 import java.util.*;
 
@@ -31,6 +32,13 @@ public class Game {
     public Game(GameState state) {
         this.state = state;
         schedule(new LoadRoom(false));
+
+        // Subtract a bonus point every second the game is active
+        GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000, () -> {
+            if (! (frozen()))
+                state().decreaseBonus();
+            return true;
+        });
     }
 
     /**
