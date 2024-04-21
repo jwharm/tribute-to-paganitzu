@@ -28,22 +28,28 @@ public class GamePaintable extends GObject implements Paintable {
         super(address);
     }
 
-    private float calculateScaleFactor(float width, float height) {
-        float w = width / Room.WIDTH / TILE_SIZE;
-        float h = height / Room.HEIGHT / TILE_SIZE;
+    private double calculateScaleFactor(double width, double height) {
+        double w = width / Room.WIDTH / TILE_SIZE;
+        double h = height / Room.HEIGHT / TILE_SIZE;
         return Math.min(w, h);
     }
 
     @Override
-    public void snapshot(org.gnome.gdk.Snapshot gdkSnapshot, double width, double height) {
+    public void snapshot(org.gnome.gdk.Snapshot gdkSnapshot,
+                         double width,
+                         double height) {
         if (game == null) return;
+
+        float w = (float) width;
+        float h = (float) height;
+
         try (var arena = Arena.ofConfined()) {
-            float scaling = calculateScaleFactor((float) width, (float) height);
+            double scaling = calculateScaleFactor(width, height);
 
             Snapshot snapshot = (Snapshot) gdkSnapshot;
-            Context cr = snapshot.appendCairo(Rect.allocate(arena).init(0, 0, (float) width, (float) height));
-            cr.setSourceRGBA(0.0f, 0.0f, 0.0f, 1.0f)
-              .rectangle(0, 0, (float) width, (float) height)
+            Context cr = snapshot.appendCairo(new Rect(arena).init(0, 0, w, h));
+            cr.setSourceRGBA(0.0, 0.0, 0.0, 1.0)
+              .rectangle(0, 0, w, h)
               .fill();
 
             cr.scale(scaling, scaling);

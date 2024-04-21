@@ -8,7 +8,7 @@ import java.util.List;
 import static io.github.jwharm.puzzlegame.engine.Image.*;
 
 /**
- * This animation is displayed when the player it bitten by a spider.
+ * This animation is displayed when the player is bitten by a spider.
  */
 public class Die extends Animation {
 

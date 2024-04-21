@@ -4,6 +4,7 @@ public class GameState {
 
     private static final int START_BONUS = 300;
     private int room, lives, score, startScore, bonus;
+    private boolean dark;
     private String message;
 
     public GameState(int room, int lives, int score) {
@@ -12,24 +13,25 @@ public class GameState {
         this.score = score;
         this.startScore = 0;
         this.bonus = START_BONUS;
+        this.dark = (room == 17);
         this.message = null;
     }
 
     public void reset() {
         score = startScore;
+        bonus = START_BONUS;
+        this.dark = (room == 17);
     }
 
     public void die() {
         if (lives > 0)
             lives--;
-        bonus = START_BONUS;
     }
 
     public void roomCompleted() {
         score += bonus;
         startScore = score;
         room++;
-        bonus = START_BONUS;
     }
 
     public void keyCollected() {
@@ -53,6 +55,10 @@ public class GameState {
         this.message = null;
     }
 
+    public void makeLight() {
+        this.dark = false;
+    }
+
     public int room() {
         return room;
     }
@@ -67,6 +73,10 @@ public class GameState {
 
     public int bonus() {
         return bonus;
+    }
+
+    public boolean dark() {
+        return dark;
     }
 
     public String message() {

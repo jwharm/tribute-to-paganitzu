@@ -78,6 +78,10 @@ public class Game {
             schedule(new Trigger(ActorType.BOULDER,
                                  new Position(4, 1),
                                  new WallMove()));
+        else if (state().room() == 17)
+            schedule(new Trigger(ActorType.PLAYER,
+                    new Position(10, 1),
+                    new LightSwitch()));
     }
 
     public void startMoving(Direction direction) {
@@ -159,6 +163,11 @@ public class Game {
     }
 
     public void draw(float row, float col, Image image) {
+        // When the light is off, most images are not painted
+        if (state().dark()
+                && !LightSwitch.visibleInDark().contains(image))
+            return;
+
         draw((cr) -> {
             cr.setSource(ImageCache.get(image), col * TILE_SIZE, row * TILE_SIZE);
             cr.getSource().setFilter(Filter.NEAREST);
