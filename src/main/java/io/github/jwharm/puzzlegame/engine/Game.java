@@ -136,6 +136,7 @@ public class Game {
                 yield true;
             }
             case HIDDEN_PASSAGE -> {
+                freeze();
                 schedule(new WallCrumble(target));
                 yield false;
             }

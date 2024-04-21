@@ -3,6 +3,7 @@ package io.github.jwharm.puzzlegame.engine;
 public class GameState {
 
     private static final int START_BONUS = 300;
+    private static final int REWARD_BONUS = 200;
     private int room, lives, score, startScore, bonus;
     private boolean dark;
     private String message;
@@ -45,6 +46,10 @@ public class GameState {
     public void decreaseBonus() {
         if (bonus > 0)
             bonus--;
+    }
+
+    public void addBonusReward() {
+        bonus += REWARD_BONUS;
     }
 
     public void showMessage(String message) {

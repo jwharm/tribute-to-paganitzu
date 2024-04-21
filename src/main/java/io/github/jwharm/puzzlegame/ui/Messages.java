@@ -11,6 +11,9 @@ public class Messages {
             You earned %d bonus points.
             """;
 
+    public static final String HIDDEN_AREA =
+            "You found a hidden area!";
+
     public static final String LIGHT_SWITCH_FOUND =
             "Behind a crumbled wall, you found a light switch!";
 }

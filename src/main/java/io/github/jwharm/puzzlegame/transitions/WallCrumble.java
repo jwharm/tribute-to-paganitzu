@@ -1,6 +1,7 @@
 package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
+import io.github.jwharm.puzzlegame.ui.Messages;
 
 import java.util.List;
 
@@ -9,7 +10,8 @@ import static io.github.jwharm.puzzlegame.engine.Image.*;
 /**
  * Some walls have hidden passages that will appear when the player pushes
  * against them. The WallCrumble transition will show a little animation,
- * remove the wall tile, and (for certain wall types) expose a gem.
+ * remove the wall tile, and (depending on tile id) either expose a gem, or
+ * display a message and reward the player with bonus points.
  */
 public class WallCrumble extends Animation {
 
@@ -27,17 +29,22 @@ public class WallCrumble extends Animation {
     @Override
     public Result run(Game game) {
         // Run the animation
-        game.freeze();
         var result = super.run(game);
 
         if (result == Result.DONE) {
             game.unfreeze();
 
-            // Spawn new tile when the animation is done
-            if (tile.id() == 5 || tile.id() == 6)
+            if (tile.id() == 5 || tile.id() == 6) {
+                // Spawn gem
                 game.room().replace(tile, Tile.createGem());
-            else
+            } else {
                 game.room().remove(tile);
+                // Display message and assign bonus points (except in level 17)
+                if (game.state().room() != 17) {
+                    game.state().showMessage(Messages.HIDDEN_AREA);
+                    game.state().addBonusReward();
+                }
+            }
         }
 
         return result;
