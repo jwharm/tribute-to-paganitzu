@@ -1,6 +1,8 @@
 package io.github.jwharm.puzzlegame.engine;
 
-public class Tile {
+import java.io.Serializable;
+
+public sealed class Tile implements Serializable permits Player {
 
     public static Tile createOutOfBounds() {
         return new Tile((short) 0, ActorType.OUT_OF_BOUNDS, TileState.PASSIVE, Image.EMPTY);
@@ -16,7 +18,7 @@ public class Tile {
 
     private final short id;
     private final ActorType type;
-    private Image image;
+    protected Image image;
     private int row, col;
     private TileState state;
     private Direction direction;
@@ -26,7 +28,7 @@ public class Tile {
         this.type = type;
         this.state = state;
         this.image = image;
-        this.direction = Direction.RIGHT;
+        this.direction = id == 40 || id == 41 ? Direction.LEFT : Direction.RIGHT;
     }
 
     public short id() {
@@ -76,12 +78,6 @@ public class Tile {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
-        if (type == ActorType.PLAYER)
-            image = switch(direction) {
-                case LEFT -> Image.PLAYER_LEFT_STAND;
-                case RIGHT -> Image.PLAYER_RIGHT_STAND;
-                default -> image;
-            };
     }
 
     @Override
