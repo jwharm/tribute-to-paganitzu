@@ -34,16 +34,16 @@ public class WallCrumble extends Animation {
         if (result == Result.DONE) {
             game.unfreeze();
 
-            if (tile.id() == 5 || tile.id() == 6) {
-                // Spawn gem
-                game.room().replace(tile, Tile.createGem());
-            } else {
-                game.room().remove(tile);
-                // Display message and assign bonus points (except in level 17)
-                if (game.state().room() != 17) {
-                    game.state().showMessage(Messages.HIDDEN_AREA);
-                    game.state().addBonusReward();
-                }
+            // Tile 5 and 6 spawn a gem, 7 and 8 not
+            switch (tile.id()) {
+                case 5, 6 -> game.room().replace(tile, Tile.createGem());
+                case 7, 8 -> game.room().remove(tile);
+            }
+
+            // Tile 8 displays message and assigns bonus (except in level 17)
+            if (tile.id() == 8 && game.state().room() != 17) {
+                game.state().showMessage(Messages.HIDDEN_AREA);
+                game.state().addBonusReward();
             }
         }
 
