@@ -28,7 +28,7 @@ public class Die extends Animation {
         // Reset the game when the animation is done
         if (result == Result.DONE) {
             game.state().showMessage(Messages.PLAYER_DIED);
-            game.schedule(new LoadRoom(false));
+            game.schedule(new LoadRoom(LoadRoom.Action.RESET_ROOM));
         }
 
         return result;

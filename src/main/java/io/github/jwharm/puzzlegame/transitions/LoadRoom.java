@@ -16,15 +16,21 @@ import io.github.jwharm.puzzlegame.engine.Transition;
  */
 public class LoadRoom implements Transition {
 
-    private final boolean nextRoom;
+    public enum Action {
+        NO_ACTION,
+        RESET_ROOM,
+        NEXT_ROOM
+    }
+
+    private final Action action;
     private Transition transition;
 
     /**
      * Create a new LoadRoom transition.
-     * @param nextRoom whether to load the next room, or reload the current one
+     * @param action whether to load the next room, or reload the current one
      */
-    public LoadRoom(boolean nextRoom) {
-        this.nextRoom = nextRoom;
+    public LoadRoom(Action action) {
+        this.action = action;
     }
 
     @Override
@@ -34,19 +40,25 @@ public class LoadRoom implements Transition {
              * When initially starting the game, there is no existing room to
              * hide. In that case, only reveal the new room.
              */
-            if (game.room() == null)
+            if (game.room() == null) {
+                if (action != Action.NO_ACTION)
+                    game.load();
                 transition = new RevealRoom();
-            else
+
+            } else {
                 transition = new HideRoom();
+            }
         }
 
         Result result = transition.run(game);
 
         if (result == Result.DONE && transition instanceof HideRoom) {
-            if (nextRoom)
+            if (action == Action.NEXT_ROOM)
                 game.state().roomCompleted();
-            else
+            else if (action == Action.RESET_ROOM)
                 game.state().reset();
+            if (action != Action.NO_ACTION)
+                game.load();
             transition = new RevealRoom();
             return transition.run(game);
         }
