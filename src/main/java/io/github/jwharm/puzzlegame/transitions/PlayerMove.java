@@ -2,16 +2,20 @@ package io.github.jwharm.puzzlegame.transitions;
 
 import io.github.jwharm.puzzlegame.engine.*;
 
+import java.util.Random;
+
 /**
  * This transition moves the player to an adjacent tile.
  */
 public class PlayerMove implements Transition {
 
+    private final Position original;
     private final Player player;
     private final Direction direction;
     private float progress = 0;
 
     public PlayerMove(Tile player, Direction direction) {
+        this.original = player.position();
         this.player = (Player) player;
         this.direction = direction;
         player.setState(TileState.ACTIVE);
@@ -45,19 +49,37 @@ public class PlayerMove implements Transition {
             if (player.current().type() == ActorType.WARP)
                 game.schedule(new Warp(player, game.room()));
 
+            // Randomly drop hat when cursed
+            else if (player.cursed() && !player.bald()) {
+                if (new Random().nextInt(50) == 0) {
+                    game.room().player().looseHat();
+                    game.schedule(new DropHat(game.room().get(original)));
+                }
+            }
+
             return Result.DONE;
         }
     }
 
     private Image moveImage() {
-        return player.direction() == Direction.RIGHT
-                ? Image.PLAYER_RIGHT_MOVE
-                : Image.PLAYER_LEFT_MOVE;
+        if (player.bald())
+            return player.direction() == Direction.RIGHT
+                    ? Image.PLAYER_NO_HAT_RIGHT_MOVE
+                    : Image.PLAYER_NO_HAT_LEFT_MOVE;
+        else
+            return player.direction() == Direction.RIGHT
+                    ? Image.PLAYER_RIGHT_MOVE
+                    : Image.PLAYER_LEFT_MOVE;
     }
 
     private Image standImage() {
-        return player.direction() == Direction.RIGHT
-                ? Image.PLAYER_RIGHT_STAND
-                : Image.PLAYER_LEFT_STAND;
+        if (player.bald())
+            return player.direction() == Direction.RIGHT
+                    ? Image.PLAYER_NO_HAT_RIGHT_STAND
+                    : Image.PLAYER_NO_HAT_LEFT_STAND;
+        else
+            return player.direction() == Direction.RIGHT
+                    ? Image.PLAYER_RIGHT_STAND
+                    : Image.PLAYER_LEFT_STAND;
     }
 }

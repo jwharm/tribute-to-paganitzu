@@ -100,16 +100,11 @@ public class SpiderMove implements Transition {
 
     // Whether to spawn a gem on this tile when a spider explodes next to it
     private boolean turnIntoGem(Tile tile) {
-        if (tile.type() == ActorType.BOULDER)
-            return true;
-
-        if (tile.type() == ActorType.MUD)
-            return true;
-
-        // Only horizontal or vertical pipe parts, no turns
-        if (tile.type() == ActorType.PIPE)
-            return List.of(13, 14, 19, 20).contains((int) tile.id());
-
-        return false;
+        return switch (tile.type()) {
+            case BOULDER, MUD -> true;
+            // Only straight pipes, no turns
+            case PIPE -> List.of(13, 14, 19, 20).contains((int) tile.id());
+            default -> false;
+        };
     }
 }

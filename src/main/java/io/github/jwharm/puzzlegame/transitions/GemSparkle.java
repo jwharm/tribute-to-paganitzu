@@ -8,6 +8,9 @@ import java.util.List;
 
 import static io.github.jwharm.puzzlegame.engine.Image.*;
 
+/**
+ * A sparkle animation on a gem.
+ */
 public class GemSparkle extends Animation {
 
     private static final int DELAY = 1;
