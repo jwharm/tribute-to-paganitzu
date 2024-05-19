@@ -21,8 +21,13 @@ public class WaterFlow implements Transition {
     private final Position position;
 
     public WaterFlow(Tile tile) {
-        tile1 = tile;
-        tile2 = new Tile(tile.id(), tile.type(), tile.state(), Image.of(tile.image().id() + 1));
+        // When a saved game is loaded, restore the original image id.
+        // The original id is always an odd number.
+        int imageId = tile.image().id();
+        if (imageId % 2 == 0) imageId--;
+
+        tile1 = new Tile(tile.id(), tile.type(), tile.state(), Image.of(imageId));
+        tile2 = new Tile(tile.id(), tile.type(), tile.state(), Image.of(imageId + 1));
         position = tile.position();
     }
 
