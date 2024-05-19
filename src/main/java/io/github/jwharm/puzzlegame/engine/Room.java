@@ -1,5 +1,6 @@
 package io.github.jwharm.puzzlegame.engine;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -9,7 +10,7 @@ import java.util.Objects;
  * columns. This class provides access to the tiles in a specific room.
  *
  */
-public final class Room {
+public final class Room implements Serializable {
 
     public static final int WIDTH = 16;
     public static final int HEIGHT = 12;
@@ -64,8 +65,8 @@ public final class Room {
     /**
      * Find the tile that the player is on.
      */
-    public Tile player() {
-        return getAny(ActorType.PLAYER);
+    public Player player() {
+        return (Player) getAny(ActorType.PLAYER);
     }
 
     public void set(int row, int col, Tile tile) {

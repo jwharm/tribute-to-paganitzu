@@ -1,5 +1,9 @@
 package io.github.jwharm.puzzlegame.engine;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -16,7 +20,7 @@ import java.util.PriorityQueue;
  * class. During the LoadRoom transition, the entire room is replace with a new
  * instance, and the room queue will be empty.
  */
-public class EventQueue {
+public class EventQueue implements Serializable {
 
     public record Event(int when, Transition transition, int priority) {}
 
@@ -24,9 +28,27 @@ public class EventQueue {
      * The queue on which all transitions are scheduled. It is ordered by the
      * requested event time. When multiple events are scheduled in one frame,
      * events with the lowest priority number will be processed first.
+     *
+     * It is transient (not serialized) because it contains lambdas. During
+     * deserialization (loading a saved game) a new instance is created.
      */
-    private final PriorityQueue<Event> transitions = new PriorityQueue<>(
-            Comparator.comparing(Event::when).thenComparing(Event::priority));
+    private transient PriorityQueue<Event> transitions;
+
+    public EventQueue() {
+        createQueue();
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        createQueue();
+    }
+
+    private void createQueue() {
+        transitions = new PriorityQueue<>(
+                Comparator.comparing(Event::when).thenComparing(Event::priority));
+    }
 
     public void schedule(int when, Transition transition) {
         transitions.add(new Event(when, transition, transition.priority()));

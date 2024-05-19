@@ -6,13 +6,16 @@ import io.github.jwharm.puzzlegame.transitions.*;
 import io.github.jwharm.puzzlegame.ui.DrawCommand;
 import io.github.jwharm.puzzlegame.ui.Messages;
 import org.freedesktop.cairo.Filter;
-import org.gnome.glib.GLib;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
 import static io.github.jwharm.puzzlegame.ui.GamePaintable.TILE_SIZE;
 
-public class Game {
+public class Game implements Serializable {
 
     /*
      * Random number generator used for randomly trigger gem animations
@@ -31,18 +34,21 @@ public class Game {
     private Direction moveDirection = null;
 
     private final EventQueue eventQueue = new EventQueue();
-    private final List<DrawCommand> drawCommands = new ArrayList<>();
+
+    // List is transient (not serialized), because it contains lambdas
+    private transient List<DrawCommand> drawCommands = new ArrayList<>();
 
     public Game(GameState state) {
         this.state = state;
-        schedule(new LoadRoom(false));
+        schedule(new LoadRoom(LoadRoom.Action.RESET_ROOM));
+    }
 
-        // Subtract a bonus point every second the game is active
-        GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000, () -> {
-            if (! (frozen()))
-                state().decreaseBonus();
-            return true;
-        });
+    // This is called during deserialization (loading a saved game)
+    @Serial
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.drawCommands = new ArrayList<>();
     }
 
     /**
@@ -61,11 +67,12 @@ public class Game {
     public void scheduleTransitions() {
         for (var tile : room.getAll()) {
             switch (tile.type()) {
-                case DOOR_LOCKED -> schedule(new DoorLocked(tile, room.getAll(ActorType.KEY)));
                 case SNAKE -> schedule(new SnakeGuard(tile));
                 case SPIDER -> schedule(new SpiderMove(tile));
                 case SPIKES -> schedule(new SpikeGuard(tile));
                 case WATER -> schedule(new WaterFlow(tile));
+                case DOOR_LOCKED -> schedule(
+                        new DoorLocked(tile, room.getAll(ActorType.KEY)));
                 case PIPE -> {
                     // Tile ids 25 & 26 are pipe endings with flowing water
                     if (tile.id() == 25 || tile.id() == 26)
@@ -73,15 +80,15 @@ public class Game {
                 }
             }
         }
-        // Room-specific transitions
-        if (state().room() == 16)
-            schedule(new Trigger(ActorType.BOULDER,
-                                 new Position(4, 1),
-                                 new WallMove()));
-        else if (state().room() == 17)
-            schedule(new Trigger(ActorType.PLAYER,
-                    new Position(10, 1),
-                    new LightSwitch()));
+        // Room-specific triggers
+        if (state.room() == 14 && !room.player().cursed())
+            schedule(new Trigger(ActorType.PLAYER, new Position(1, 11), new Baldness()));
+        else if (state.room() == 15 && room.getAny(ActorType.SPIDER) != null)
+            schedule(new Trigger(ActorType.GEM, new Position(9, 11), new BrokenPipe()));
+        else if (state.room() == 16 && room.get(4, 1).type() != ActorType.BOULDER)
+            schedule(new Trigger(ActorType.BOULDER, new Position(4, 1), new WallMove()));
+        else if (state.room() == 17 && state().dark())
+            schedule(new Trigger(ActorType.PLAYER, new Position(10, 1), new LightSwitch()));
     }
 
     public void startMoving(Direction direction) {
@@ -100,7 +107,7 @@ public class Game {
         if (moveDirection == null || frozen())
             return; // Not moving
 
-        Tile player = room.player();
+        Player player = room.player();
         if (player == null || player.state() == TileState.ACTIVE)
             return;
         Tile target = room.get(player.position().move(moveDirection));
@@ -135,6 +142,11 @@ public class Game {
                 room.remove(target);
                 yield true;
             }
+            case HAT -> {
+                player.pickupHat();
+                room.remove(target);
+                yield true;
+            }
             case HIDDEN_PASSAGE -> {
                 freeze();
                 schedule(new WallCrumble(target));
@@ -148,7 +160,7 @@ public class Game {
                 freeze();
                 state().showMessage(Messages.LEVEL_COMPLETED
                         .formatted(state().bonus()));
-                schedule(new LoadRoom(true));
+                schedule(new LoadRoom(LoadRoom.Action.NEXT_ROOM));
                 yield false;
             }
             case EMPTY, WARP -> true;
@@ -197,6 +209,11 @@ public class Game {
      */
     public void updateState() {
         ticks++;
+
+        // Subtract a bonus point every second the game is active
+        if (ticks % 10 == 0)
+            if (! (frozen()))
+                state().decreaseBonus();
 
         // Move the player
         move();

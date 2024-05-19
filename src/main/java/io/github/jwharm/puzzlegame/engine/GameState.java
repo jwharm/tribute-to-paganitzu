@@ -1,6 +1,8 @@
 package io.github.jwharm.puzzlegame.engine;
 
-public class GameState {
+import java.io.Serializable;
+
+public class GameState implements Serializable {
 
     private static final int START_BONUS = 300;
     private static final int REWARD_BONUS = 200;
@@ -49,14 +51,14 @@ public class GameState {
     }
 
     public void addBonusReward() {
-        bonus += REWARD_BONUS;
+        score += REWARD_BONUS;
     }
 
     public void showMessage(String message) {
         this.message = message;
     }
     
-    public void hideMessage() {
+    public void clearMessage() {
         this.message = null;
     }
 
