@@ -11,8 +11,8 @@ public class ImageCache {
 
     private static List<ImageSurface> images;
 
-    public static void init(String filename) {
-        images = TileReader.loadTileImages(FileIO.readFile(filename));
+    public static void init(byte[] data) {
+        images = TileReader.loadTileImages(data);
         images.add(TileReader.generateSpikeBarImage());
     }
 

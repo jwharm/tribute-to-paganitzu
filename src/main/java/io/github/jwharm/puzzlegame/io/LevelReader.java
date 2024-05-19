@@ -19,8 +19,8 @@ public class LevelReader {
 
     private static byte[] data;
 
-    public static void load(String filename) {
-        data = FileIO.readFile(filename);
+    public static void setData(byte[] fileData) {
+        data = fileData;
     }
 
     public static Room get(int id) {
@@ -108,6 +108,7 @@ public class LevelReader {
             case 24 -> PIPE_3;
             case 25 -> PIPE_END_4_1;
             case 26 -> PIPE_END_6_1;
+            case 27 -> PIPE_END_4_DRY;
             case 28 -> PIPE_END_6_DRY;
             case 29 -> WATER_5_1;
             case 30 -> WATER_7_1;

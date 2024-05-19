@@ -34,10 +34,6 @@ public class RevealRoom implements Transition {
 
     @Override
     public Result run(Game game) {
-        // Load the room to its initial state before the transition starts.
-        if (current == BOARD_SIZE)
-            game.load();
-
         /*
          * When the transition is complete (0 blue squares left on-screen),
          * resume the game and start the usual transitions.
