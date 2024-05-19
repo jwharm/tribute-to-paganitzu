@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="GameWindow" parent="AdwApplicationWindow">
+    <property name="title">Puzzle game</property>
+    <property name="default-width">580</property>
+    <property name="default-height">480</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwHeaderBar" id="headerBar">
+            <child type="start">
+              <object class="GtkLabel" id="levelLabel"/>
+            </child>
+            <child type="start">
+              <object class="GtkLabel" id="livesLabel"/>
+            </child>
+            <child type="start">
+              <object class="GtkLabel" id="scoreLabel"/>
+            </child>
+            <child type="start">
+              <object class="GtkLabel" id="bonusLabel"/>
+            </child>
+            <child type="end">
+              <object class="GtkMenuButton">
+                <property name="icon-name">open-menu-symbolic</property>
+                <property name="menu-model">primary_menu</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStack" id="stack">
+            <child>
+              <object class="AdwStatusPage" id="statusPage">
+                <property name="title">Welcome</property>
+                <property name="description">Please select the Paganitzu shareware archive (usually named "1paga.zip")</property>
+                <property name="icon-name">edit-find-symbolic</property>
+                <child>
+                  <object class="GtkButton" id="locateButton">
+                    <property name="label">Browse...</property>
+                    <property name="action-name">win.locate</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwToastOverlay" id="toastOverlay">
+                <child>
+                  <object class="GtkPicture" id="picture">
+                    <property name="hexpand">true</property>
+                    <property name="vexpand">true</property>
+                    <property name="content-fit">contain</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+  <menu id="primary_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Pause game</attribute>
+        <attribute name="action">win.pause</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Restart level</attribute>
+        <attribute name="action">win.restart</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Save game</attribute>
+        <attribute name="action">win.save</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Load game</attribute>
+        <attribute name="action">win.load</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Quit</attribute>
+        <attribute name="action">app.quit</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

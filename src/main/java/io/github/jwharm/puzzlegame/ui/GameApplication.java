@@ -2,11 +2,8 @@ package io.github.jwharm.puzzlegame.ui;
 
 import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gobject.types.Types;
-import io.github.jwharm.puzzlegame.engine.Game;
-import io.github.jwharm.puzzlegame.engine.GameState;
 import org.gnome.gio.ApplicationFlags;
 import org.gnome.gio.SimpleAction;
-import org.gnome.glib.GLib;
 import org.gnome.glib.Type;
 import org.gnome.gobject.GObject;
 import org.gnome.adw.Application;
@@ -14,9 +11,9 @@ import org.gnome.gtk.Window;
 
 import java.lang.foreign.MemorySegment;
 
-public class GameApplication extends Application {
+import static org.gnome.glib.GLib.SOURCE_CONTINUE;
 
-    private static final int FPS = 10;
+public class GameApplication extends Application {
 
     private static final Type gtype = Types.register(GameApplication.class);
 
@@ -39,7 +36,12 @@ public class GameApplication extends Application {
         var quit = new SimpleAction("quit", null);
         quit.onActivate(_ -> quit());
         addAction(quit);
-        setAccelsForAction("app.quit", new String[]{"<primary>q"});
+
+        setAccelsForAction("win.pause", new String[]{"Escape"});
+        setAccelsForAction("win.restart", new String[]{"<control>r"});
+        setAccelsForAction("win.save", new String[]{"<control>s"});
+        setAccelsForAction("win.load", new String[]{"<control>l"});
+        setAccelsForAction("app.quit", new String[]{"<control>q"});
     }
 
     @Override
@@ -47,35 +49,11 @@ public class GameApplication extends Application {
         try {
             Window win = this.getActiveWindow();
             if (win == null)
-                win = createWindow();
+                win = GameWindow.create(this);
             win.present();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
-        }
-    }
-
-    private GameWindow createWindow() {
-        GameWindow win = GameWindow.create(this);
-        var game = new Game(new GameState(1, 5, 0));
-        win.setGame(game);
-
-        GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000 / FPS, () -> {
-            updateGameState(win);
-            return true;
-        });
-
-        return win;
-    }
-
-    /*
-     * This function is run every "frame". It will update the game state, and
-     * redraw the screen.
-     */
-    private void updateGameState(GameWindow win) {
-        if (!win.game().paused()) {
-            win.game().updateState();
-            win.update();
         }
     }
 }

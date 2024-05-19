@@ -13,6 +13,7 @@ import org.gnome.gtk.Snapshot;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
+import java.util.Set;
 
 public class GamePaintable extends GObject implements Paintable {
 
@@ -48,11 +49,11 @@ public class GamePaintable extends GObject implements Paintable {
 
             Snapshot snapshot = (Snapshot) gdkSnapshot;
             Context cr = snapshot.appendCairo(new Rect(arena).init(0, 0, w, h));
+
             cr.setSourceRGBA(0.0, 0.0, 0.0, 1.0)
               .rectangle(0, 0, w, h)
-              .fill();
-
-            cr.scale(scaling, scaling);
+              .fill()
+              .scale(scaling, scaling);
 
             for (var cmd : game.drawCommands())
                 cmd.draw(cr);
@@ -67,8 +68,8 @@ public class GamePaintable extends GObject implements Paintable {
     }
 
     @Override
-    public PaintableFlags getFlags() {
-        return PaintableFlags.SIZE; // The image size will never change
+    public Set<PaintableFlags> getFlags() {
+        return Set.of(PaintableFlags.SIZE); // The image size will never change
     }
 
     public void setGame(Game game) {
@@ -79,7 +80,6 @@ public class GamePaintable extends GObject implements Paintable {
         return this.game;
     }
 
-    // Add a simple constructor
     public static GamePaintable create() {
         return GObject.newInstance(GamePaintable.getType());
     }
