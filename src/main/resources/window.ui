@@ -36,12 +36,14 @@
             <child>
               <object class="AdwStatusPage" id="statusPage">
                 <property name="title">Welcome</property>
-                <property name="description">Please select the Paganitzu shareware archive (usually named "1paga.zip")</property>
-                <property name="icon-name">edit-find-symbolic</property>
+                <property name="description">This game loads the level design and graphics from the original Paganitzu
+                  shareware episode 1. Before the game starts, the shareware version will be downloaded from the
+                  publisher (3D Realms). The file is cached, so you don't have to be online the next time.</property>
+                <property name="icon-name">folder-download-symbolic</property>
                 <child>
                   <object class="GtkButton" id="locateButton">
-                    <property name="label">Browse...</property>
-                    <property name="action-name">win.locate</property>
+                    <property name="label">Download shareware episode</property>
+                    <property name="action-name">win.download</property>
                   </object>
                 </child>
               </object>

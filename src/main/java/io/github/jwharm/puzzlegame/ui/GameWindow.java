@@ -17,7 +17,6 @@ import org.gnome.adw.ApplicationWindow;
 import org.gnome.adw.HeaderBar;
 import org.gnome.adw.MessageDialog;
 import org.gnome.gdk.Gdk;
-import org.gnome.gio.File;
 import org.gnome.gio.SimpleAction;
 import org.gnome.glib.GLib;
 import org.gnome.glib.Type;
@@ -28,9 +27,14 @@ import org.gnome.gtk.AlertDialog;
 
 import java.io.*;
 import java.lang.foreign.MemorySegment;
+import java.net.URI;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.zip.*;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.gnome.glib.GLib.SOURCE_CONTINUE;
 
 @GtkTemplate(name="GameWindow", ui="/io/github/jwharm/puzzlegame/window.ui")
@@ -83,9 +87,9 @@ public class GameWindow extends ApplicationWindow {
         });
 
         // Create and register actions
-        var locateAction = new SimpleAction("locate", null);
-        locateAction.onActivate(_ -> loadAssets());
-        addAction(locateAction);
+        var downloadAction = new SimpleAction("download", null);
+        downloadAction.onActivate(_ -> download());
+        addAction(downloadAction);
 
         restartAction = new SimpleAction("restart", null);
         restartAction.onActivate(_ -> restart());
@@ -128,6 +132,10 @@ public class GameWindow extends ApplicationWindow {
             this.getDefaultSize(w, null);
             this.setDefaultSize(w.get(), ((int) (w.get() * 0.75)) + hbHeight);
         });
+
+        // If the game files are downloaded and cached, proceed to the game.
+        if (isCached())
+            initGame();
     }
 
     public void pauseOrResume(SimpleAction pauseAction) {
@@ -198,24 +206,41 @@ public class GameWindow extends ApplicationWindow {
         }
     }
 
-    public void loadAssets() {
-        var dialog = new FileDialog();
-        dialog.open(this, null, (_, result, _) -> {
-            try {
-                File file = dialog.openFinish(result);
-                String path = file.getPath();
-                initGame(path);
-            } catch (GErrorException ignored) {} // user clicked cancel
-        });
+    private Path getCachedFileName() {
+        String userCacheDir = GLib.getUserCacheDir();
+        return Path.of(userCacheDir, "PAGA1.zip");
+    }
+
+    private boolean isCached() {
+        return getCachedFileName().toFile().exists();
+    }
+
+    public void download() {
+        try {
+            String url = "https://archive.org/download/Paganitzu/PAGA.zip";
+            URLConnection connection = URI.create(url).toURL().openConnection();
+            InputStream inputStream = connection.getInputStream();
+            Path cachedFile = getCachedFileName();
+            Files.copy(inputStream, cachedFile, REPLACE_EXISTING);
+            inputStream.close();
+            initGame();
+        } catch (Exception e) {
+            MessageDialog dialog = new MessageDialog(this, null, e.getMessage());
+            dialog.addResponse("ok", "OK");
+            dialog.setDefaultResponse("ok");
+            dialog.present();
+        }
     }
 
     /*
      * This is run after the game asset files have been located by the player.
      * We switch to the Paintable, load the assets, and launch level 1.
      */
-    private void initGame(String path) {
+    private void initGame() {
         try {
             ArchiveReader reader = new ArchiveReader();
+            String path = getCachedFileName().toString();
+            System.out.println(path);
             var map = reader.extractGameAssets(path);
 
             ImageCache.init(map.get("PAGA1.012"));
