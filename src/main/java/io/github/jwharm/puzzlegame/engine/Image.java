@@ -114,7 +114,13 @@ public enum Image {
      * Does not exist in the game data. Image is generated in
      * {@link TileReader#generateSpikeBarImage()}
      */
-    SPIKE_BARS(100);
+    SPIKE_BARS(100),
+
+    /**
+     * Does not exist in the game data. Image is generated in
+     * {@link TileReader#generateArrowImage()}
+     */
+    ARROW(101);
 
     private final int id;
 

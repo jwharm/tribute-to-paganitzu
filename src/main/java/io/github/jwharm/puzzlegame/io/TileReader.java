@@ -1,8 +1,11 @@
 package io.github.jwharm.puzzlegame.io;
 
+import org.freedesktop.cairo.Antialias;
+import org.freedesktop.cairo.Context;
 import org.freedesktop.cairo.Format;
 import org.freedesktop.cairo.ImageSurface;
 
+import java.io.IOException;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.nio.ByteBuffer;
@@ -118,6 +121,32 @@ public class TileReader {
                 int rgb24 = (color << 8) | color;
                 imgData.setAtIndex(ValueLayout.JAVA_INT, row * 16 + x, rgb24);
             }
+        }
+        return surface;
+    }
+
+    /**
+     * Generate a 16x16 RGB image that is used to draw a yellow arrow pointing
+     * down at the unlocked door in room 1.
+     */
+    public static ImageSurface generateArrowImage() {
+        ImageSurface surface = ImageSurface.create(Format.RGB24, 16, 16);
+        try {
+            Context.create(surface)
+                   .setLineWidth(1)
+                   .setSourceRGBA(1.0, 1.0, 0.33, 1.0)
+                   .setAntialias(Antialias.NONE)
+                   .moveTo(8, 3)
+                   .lineTo(11, 3)
+                   .lineTo(11, 8)
+                   .lineTo(12, 8)
+                   .lineTo(9, 11)
+                   .lineTo(6, 8)
+                   .lineTo(8, 8)
+                   .closePath()
+                   .stroke();
+        } catch (IOException ignored) {
+            // Exception is only thrown if surface is read-only
         }
         return surface;
     }
