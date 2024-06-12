@@ -28,14 +28,15 @@ java {
 }
 
 tasks.register('glibCompileResources') {
-    exec {
-        workingDir 'src/main/resources'
-        commandLine 'C:/dev/msys64/mingw64/bin/glib-compile-resources',
-                    'game.gresource.xml'
+    doLast {
+        exec {
+            workingDir 'src/main/resources'
+            commandLine 'glib-compile-resources', 'game.gresource.xml'
+        }
     }
 }
 
-tasks.named('compileJava') {
+tasks.named('classes') {
     dependsOn glibCompileResources
 }
 
