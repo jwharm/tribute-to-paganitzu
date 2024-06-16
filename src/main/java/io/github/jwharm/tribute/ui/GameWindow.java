@@ -74,6 +74,7 @@ public class GameWindow extends ApplicationWindow {
     @GtkChild public Label livesLabel;
     @GtkChild public Label scoreLabel;
     @GtkChild public Label bonusLabel;
+    @GtkChild public Entry urlEntry;
     @GtkChild public Stack stack;
     @GtkChild public ToastOverlay toastOverlay;
     @GtkChild public Picture picture;
@@ -319,15 +320,22 @@ public class GameWindow extends ApplicationWindow {
      */
     private void download() {
         try {
-            String url = "https://archive.org/download/Paganitzu/PAGA.zip";
+            String url = urlEntry.getText();
             URLConnection connection = URI.create(url).toURL().openConnection();
             InputStream inputStream = connection.getInputStream();
             Path cachedFile = getCachedFileName();
             Files.copy(inputStream, cachedFile, REPLACE_EXISTING);
             inputStream.close();
             initGame();
+        } catch (FileNotFoundException fnf) {
+            MessageDialog dialog = new MessageDialog(
+                    this, Messages.DOWNLOAD_ERROR, "Invalid URL");
+            dialog.addResponse("ok", "OK");
+            dialog.setDefaultResponse("ok");
+            dialog.present();
         } catch (Exception e) {
-            MessageDialog dialog = new MessageDialog(this, null, e.getMessage());
+            MessageDialog dialog = new MessageDialog(
+                    this, Messages.DOWNLOAD_ERROR, e.getMessage());
             dialog.addResponse("ok", "OK");
             dialog.setDefaultResponse("ok");
             dialog.present();
@@ -347,10 +355,15 @@ public class GameWindow extends ApplicationWindow {
             ImageCache.init(map.get("PAGA1.012"));
             LevelReader.setData(map.get("PAGA1.007"));
         } catch (IOException ioe) {
+            // Something went wrong reading the game data
             MessageDialog dialog = new MessageDialog(this, null, ioe.getMessage());
             dialog.addResponse("ok", "OK");
             dialog.setDefaultResponse("ok");
             dialog.present();
+
+            // Delete the cached file
+            getCachedFileName().toFile().delete();
+
             return;
         }
 

@@ -11,6 +11,7 @@
         <property name="orientation">vertical</property>
         <child>
           <object class="AdwHeaderBar" id="headerBar">
+            <property name="show-title">false</property>
             <child type="start">
               <object class="GtkLabel" id="levelLabel"/>
             </child>
@@ -35,15 +36,25 @@
           <object class="GtkStack" id="stack">
             <child>
               <object class="AdwStatusPage" id="statusPage">
-                <property name="title">Welcome</property>
-                <property name="description">This game loads the level design and graphics from the original Paganitzu
-                  shareware episode 1. Before the game starts, the shareware version will be downloaded from the
-                  publisher (3D Realms). The file is cached, so you don't have to be online the next time.</property>
+                <property name="title">Download Paganitzu</property>
+                <property name="description">This game loads the level design and graphics from the original Paganitzu shareware episode 1. Before the game starts, the shareware version will be downloaded from the publisher (3D Realms). The file is cached, so you don't have to be online the next time.</property>
                 <property name="icon-name">folder-download-symbolic</property>
                 <child>
-                  <object class="GtkButton" id="locateButton">
-                    <property name="label">Download shareware episode</property>
-                    <property name="action-name">win.download</property>
+                  <object class="GtkBox">
+                    <property name="orientation">0</property>
+                    <child>
+                      <object class="GtkEntry" id="urlEntry">
+                        <property name="text">https://archive.org/download/Paganitzu/PAGA.zip</property>
+                        <property name="margin-end">6</property>
+                        <property name="hexpand">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="downloadButton">
+                        <property name="label">Download</property>
+                        <property name="action-name">win.download</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>

@@ -24,9 +24,13 @@ package io.github.jwharm.tribute.ui;
  */
 public class Messages {
 
+    public static final String DOWNLOAD_ERROR =
+            "Error downloading file";
+
     public static final String INVALID_FILE =
-            "The selected file cannot be used: It should be a zip file that " +
-            "contains the Paganitzu shareware episode 1 installation files.";
+            "The downloaded file cannot be used: It should be a zip file " +
+            "that contains the Paganitzu shareware episode 1 installation " +
+            "files.";
 
     public static final String PLAYER_DIED =
             "Press enter to continue";
