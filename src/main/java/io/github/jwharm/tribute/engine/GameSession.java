@@ -34,6 +34,12 @@ import java.util.*;
 
 import static io.github.jwharm.tribute.ui.GamePaintable.TILE_SIZE;
 
+/**
+ * This is the core gameplay class, representing the current gameplay session.
+ * <p>
+ * When saving the game, this class is serialized to a file, together with the
+ * current {@link Room} and {@link GameState}.
+ */
 public class GameSession implements Serializable {
 
     /*

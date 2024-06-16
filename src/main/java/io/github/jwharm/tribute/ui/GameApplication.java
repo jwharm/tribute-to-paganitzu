@@ -30,6 +30,10 @@ import org.gnome.gtk.Window;
 
 import java.lang.foreign.MemorySegment;
 
+/**
+ * This is the Application subclass for the game. It will install keyboard
+ * accelerators and open a new game window.
+ */
 public class GameApplication extends Application {
 
     private static final Type gtype = Types.register(GameApplication.class);
@@ -38,16 +42,27 @@ public class GameApplication extends Application {
         return gtype;
     }
 
+    /**
+     * This constructor is used by Java-GI to create a GameApplication proxy
+     * object for an already existing instance in native memory.
+     */
     public GameApplication(MemorySegment address) {
         super(address);
     }
 
+    /**
+     * Construct a new GameApplication
+     */
     public static GameApplication create() {
         return GObject.newInstance(getType(),
                 "application-id", "io.github.jwharm.PuzzleGame",
                 "flags", ApplicationFlags.DEFAULT_FLAGS);
     }
 
+    /**
+     * This method is called by GObject when the new GameApplication instance is
+     * constructed. It's used to install the shortcut keys.
+     */
     @InstanceInit
     public void init() {
         var quit = new SimpleAction("quit", null);
@@ -61,16 +76,14 @@ public class GameApplication extends Application {
         setAccelsForAction("app.quit", new String[]{"<control>q"});
     }
 
+    /**
+     * This method is called during application launch.
+     */
     @Override
     public void activate() {
-        try {
-            Window win = this.getActiveWindow();
-            if (win == null)
-                win = GameWindow.create(this);
-            win.present();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        Window win = this.getActiveWindow();
+        if (win == null)
+            win = GameWindow.create(this);
+        win.present();
     }
 }

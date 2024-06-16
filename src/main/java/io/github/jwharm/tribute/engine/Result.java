@@ -19,6 +19,9 @@
 
 package io.github.jwharm.tribute.engine;
 
+/**
+ * Represents whether a transition must keep running or is done.
+ */
 public enum Result {
     CONTINUE,
     DONE

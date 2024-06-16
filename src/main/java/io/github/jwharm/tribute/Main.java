@@ -22,6 +22,9 @@ package io.github.jwharm.tribute;
 import io.github.jwharm.tribute.ui.GameApplication;
 import org.gnome.gio.Resource;
 
+/**
+ * Entry point for the application.
+ */
 public class Main {
     public static void main(String[] args) throws Exception {
         Resource resource = Resource.load("src/main/resources/game.gresource");

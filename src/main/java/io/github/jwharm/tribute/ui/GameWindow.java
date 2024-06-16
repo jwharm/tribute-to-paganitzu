@@ -54,9 +54,18 @@ import java.util.zip.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.gnome.glib.GLib.SOURCE_CONTINUE;
 
+/**
+ * This is a Gtk composite template class. The window layout is defined in the
+ * file "GameWindow.ui", and all "@GtkChild"-annotated fields are linked to the
+ * widgets as specified in the ui file.
+ */
 @GtkTemplate(name="GameWindow", ui= "/io/github/jwharm/tribute/GameWindow.ui")
 public class GameWindow extends ApplicationWindow {
 
+    /*
+     * This isn't just the number of frames per seconds, but sets the overall
+     * game speed. A higher FPS will mean the entire game runs faster.
+     */
     private static final int FPS = 10;
 
     private static final Type gtype = Types.register(GameWindow.class);
@@ -76,18 +85,33 @@ public class GameWindow extends ApplicationWindow {
     private SimpleAction loadAction;
     private SimpleAction saveAction;
 
+    /**
+     * Get the gtype of the GameWindow class
+     */
     public static Type getType() {
         return gtype;
     }
 
+    /**
+     * This constructor is used by Java-GI to create a GameWindow proxy object
+     * for an already existing instance in native memory.
+     */
     public GameWindow(MemorySegment address) {
         super(address);
     }
 
+    /**
+     * Construct a new GameWindow
+     */
     public static GameWindow create(Application application) {
         return GObject.newInstance(getType(), "application", application);
     }
 
+    /**
+     * This method is called by GObject when the new GameWindow instance is
+     * constructed. It is used to create the user interface actions, and trigger
+     * the start of the main game loop (see {@link #initGame()}.
+     */
     @InstanceInit
     public void init() {
         // Add EventController to capture keyboard events
@@ -150,6 +174,9 @@ public class GameWindow extends ApplicationWindow {
             initGame();
     }
 
+    /*
+     * Toggle between paused and running state
+     */
     private void pauseOrResume(SimpleAction pauseAction) {
         if (game().paused()) {
             game().resume();
@@ -161,6 +188,10 @@ public class GameWindow extends ApplicationWindow {
         pauseAction.setState(Variant.boolean_(game().paused()));
     }
 
+    /*
+     * Ask to reset the room to its initial state, and if yes, schedule a
+     * LoadRoom transition that will reset the room.
+     */
     private void restart() {
         AlertDialog alert = AlertDialog.builder()
                 .setModal(true)
@@ -185,6 +216,9 @@ public class GameWindow extends ApplicationWindow {
         });
     }
 
+    /*
+     * Save the game in progress
+     */
     private void save() {
         GameSession game = game();
         game.pause();
@@ -203,21 +237,32 @@ public class GameWindow extends ApplicationWindow {
         game.resume();
     }
 
+    /*
+     * Load a previously saved game
+     */
     private void load() {
-        try (var fis = new FileInputStream(getSaveGameFileName().toFile());
-             var zis = new InflaterInputStream(fis);
-             var ois = new ObjectInputStream(zis)) {
-            GameSession game = (GameSession) ois.readObject();
-            paintable.setGame(game);
-            game.schedule(new LoadRoom(LoadRoom.Action.NO_ACTION));
-            game.freeze();
-            game.resume();
-        } catch (ClassNotFoundException ignored) {
+        try {
+            File file = getSaveGameFileName().toFile();
+            if (!file.exists())
+                return;
+
+            try (var fis = new FileInputStream(file);
+                 var zis = new InflaterInputStream(fis);
+                 var ois = new ObjectInputStream(zis)) {
+                GameSession game = (GameSession) ois.readObject();
+                paintable.setGame(game);
+                game.schedule(new LoadRoom(LoadRoom.Action.NO_ACTION));
+                game.freeze();
+                game.resume();
+            } catch (ClassNotFoundException ignored) {}
         } catch (IOException ioe) {
             toastOverlay.addToast(new Toast(ioe.getMessage()));
         }
     }
 
+    /*
+     * Display the "About" window
+     */
     private void about() {
         var aboutWindow = AboutWindow.builder()
                 .setApplicationName("Tribute to Paganitzu")
@@ -240,6 +285,9 @@ public class GameWindow extends ApplicationWindow {
         aboutWindow.present();
     }
 
+    /*
+     * Get the Path to the save-game file in the user's local data directory.
+     */
     private Path getSaveGameFileName() throws IOException {
         String userDataDir = GLib.getUserDataDir();
         Path path = Path.of(userDataDir, "Tribute to Paganitzu");
@@ -247,15 +295,28 @@ public class GameWindow extends ApplicationWindow {
         return path.resolve("Saved game");
     }
 
+    /*
+     * Generate the Path to the cached Paganitzu game data in the user's local
+     * cache directory.
+     */
     private Path getCachedFileName() {
         String userCacheDir = GLib.getUserCacheDir();
         return Path.of(userCacheDir, "PAGA1.zip");
     }
 
+    /*
+     * Check if the Paganitzu shareware game archive has already been
+     * downloaded.
+     */
     private boolean isCached() {
         return getCachedFileName().toFile().exists();
     }
 
+    /*
+     * Download the Paganitzu shareware game from an URL that I hope will not
+     * change too frequently. It is saved to the user cache directory, so it
+     * will be reused after the first time.
+     */
     private void download() {
         try {
             String url = "https://archive.org/download/Paganitzu/PAGA.zip";

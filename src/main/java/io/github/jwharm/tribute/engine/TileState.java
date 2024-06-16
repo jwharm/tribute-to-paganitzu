@@ -21,6 +21,9 @@ package io.github.jwharm.tribute.engine;
 
 import java.util.NoSuchElementException;
 
+/**
+ * A tile is either passive, active (a transition is running), or removed.
+ */
 public enum TileState {
     ACTIVE(0),
     PASSIVE(1),

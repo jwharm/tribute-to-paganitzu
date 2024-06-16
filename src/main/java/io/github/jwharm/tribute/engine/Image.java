@@ -24,7 +24,7 @@ import io.github.jwharm.tribute.io.TileReader;
 import java.util.NoSuchElementException;
 
 /**
- * All images in the order that they are stored
+ * All images (in the order that they are stored), and two generated images.
  */
 public enum Image {
 

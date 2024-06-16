@@ -21,12 +21,19 @@ package io.github.jwharm.tribute.engine;
 
 import static java.lang.Math.abs;
 
+/**
+ * Represents the coordinates (row and column) of a tile in the room. The
+ * coordinates are zero-indexed.
+ */
 public record Position(float row, float col) {
 
     public Position move(Direction direction) {
         return move(direction, 1);
     }
 
+    /**
+     * Return a position relative to this one.
+     */
     public Position move(Direction direction, float distance) {
         return switch (direction) {
             case UP -> new Position(row - distance, col);
@@ -36,6 +43,10 @@ public record Position(float row, float col) {
         };
     }
 
+    /**
+     * Check if these two positions are in the same row and/or column and are
+     * adjacent to each other.
+     */
     public boolean borders(Position other) {
         return (this.col == other.col || this.row == other.row)
                 && abs(this.col - other.col) <= 1

@@ -19,9 +19,15 @@
 
 package io.github.jwharm.tribute.engine;
 
+/**
+ * A Transition represents something that happens in the game.
+ */
 public interface Transition {
     Result run(GameSession game);
 
+    /**
+     * Transitions are executed in order of priority.
+     */
     default int priority() {
         return 999;
     }

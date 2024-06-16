@@ -34,6 +34,10 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.util.Set;
 
+/**
+ * This class implements the Gdk {@link Paintable} interface so that it can be
+ * used as a graphical canvas on which the game is drawn.
+ */
 public class GamePaintable extends GObject implements Paintable {
 
     public static final int TILE_SIZE = 16;
@@ -44,16 +48,26 @@ public class GamePaintable extends GObject implements Paintable {
         return gtype;
     }
 
+    /**
+     * This constructor is used by Java-GI to create a GamePaintable proxy
+     * object for an already existing instance in native memory.
+     */
     public GamePaintable(MemorySegment address) {
         super(address);
     }
 
+    /*
+     * Calculate the scale factor, so the game will fit inside the window.
+     */
     private double calculateScaleFactor(double width, double height) {
         double w = width / Room.WIDTH / TILE_SIZE;
         double h = height / Room.HEIGHT / TILE_SIZE;
         return Math.min(w, h);
     }
 
+    /**
+     * This method is called by Gtk when redrawing the screen.
+     */
     @Override
     public void snapshot(org.gnome.gdk.Snapshot gdkSnapshot,
                          double width,
@@ -69,14 +83,17 @@ public class GamePaintable extends GObject implements Paintable {
             Snapshot snapshot = (Snapshot) gdkSnapshot;
             Context cr = snapshot.appendCairo(new Rect(arena).init(0, 0, w, h));
 
+            // Clear the canvas and set the scaling factor
             cr.setSourceRGBA(0.0, 0.0, 0.0, 1.0)
               .rectangle(0, 0, w, h)
               .fill()
               .scale(scaling, scaling);
 
+            // Execute all available draw commands
             for (var cmd : game.drawCommands())
                 cmd.draw(cr);
 
+            // We're done, so clear the draw commands queue
             game.drawCommands().clear();
         }
     }
@@ -99,6 +116,9 @@ public class GamePaintable extends GObject implements Paintable {
         return this.game;
     }
 
+    /**
+     * Construct a new GamePaintable
+     */
     public static GamePaintable create() {
         return GObject.newInstance(GamePaintable.getType());
     }

@@ -21,6 +21,10 @@ package io.github.jwharm.tribute.ui;
 
 import org.freedesktop.cairo.Context;
 
+/**
+ * The DrawCommand callback is used to create a drawing operation that will be
+ * run when drawing the next frame on the screen.
+ */
 @FunctionalInterface
 public interface DrawCommand {
     void draw(Context cr);

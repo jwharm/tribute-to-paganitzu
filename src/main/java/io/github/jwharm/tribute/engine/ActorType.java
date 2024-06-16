@@ -19,6 +19,9 @@
 
 package io.github.jwharm.tribute.engine;
 
+/**
+ * Represents the type of a tile.
+ */
 public enum ActorType {
     OUT_OF_BOUNDS,
     BOULDER,
@@ -37,5 +40,5 @@ public enum ActorType {
     SPIKES,
     WALL,
     WARP,
-    WATER;
+    WATER
 }

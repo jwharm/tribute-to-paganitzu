@@ -21,6 +21,14 @@ package io.github.jwharm.tribute.engine;
 
 import java.io.Serializable;
 
+/**
+ * This class maintains global state of the game: the current room, the number
+ * of lives, the score, the starting score of the room, the remaining bonus
+ * points, and whether the room is currently dark (specifically room 17).
+ * <p>
+ * The "message" field contains a text message that must be displayed on-screen.
+ * It will be cleared after the message dialog has been displayed.
+ */
 public class GameState implements Serializable {
 
     private static final int START_BONUS = 300;

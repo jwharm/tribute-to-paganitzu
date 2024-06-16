@@ -22,10 +22,12 @@ package io.github.jwharm.tribute.io;
 import io.github.jwharm.tribute.engine.Image;
 import org.freedesktop.cairo.ImageSurface;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Helper class that maintains a cache of {@link ImageSurface}s for all tile
+ * images.
+ */
 public class ImageCache {
 
     private static List<ImageSurface> images;
@@ -38,18 +40,5 @@ public class ImageCache {
 
     public static ImageSurface get(Image image) {
         return images.get(image.id());
-    }
-
-    /**
-     * Save all tile images to png files (redundant, not used in game)
-     */
-    public static void saveImagesToDisk() {
-        try {
-            Files.createDirectories(Paths.get("build/images"));
-            for (int i = 0; i < images.size(); i++) {
-                ImageSurface image = images.get(i);
-                image.writeToPNG("build/images/%02d.png".formatted(i));
-            }
-        } catch (Exception ignored) {}
     }
 }

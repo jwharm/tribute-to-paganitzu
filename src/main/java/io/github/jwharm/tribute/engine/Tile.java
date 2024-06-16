@@ -21,6 +21,11 @@ package io.github.jwharm.tribute.engine;
 
 import java.io.Serializable;
 
+/**
+ * A Tile represents a single square in a game room. A tile has a position,
+ * a type (like a wall, door, or empty), a current state (passive, active or
+ * removed) and an image.
+ */
 public sealed class Tile implements Serializable permits Player {
 
     public static Tile createOutOfBounds() {
@@ -40,7 +45,7 @@ public sealed class Tile implements Serializable permits Player {
     protected Image image;
     private int row, col;
     private TileState state;
-    private Direction direction;
+    private Direction direction; // used for the player, spiders, snakes etc
 
     public Tile(short id, ActorType type, TileState state, Image image) {
         this.id = id;

@@ -23,6 +23,8 @@ package io.github.jwharm.tribute.engine;
  * Technically the player is a tile like any other, but we have to keep track
  * of the tile currently "below" it, so that when the player moves, it is
  * restored.
+ * <p>
+ * We also keep track of the "curse of baldness" that can happen in room 14.
  */
 public final class Player extends Tile {
 

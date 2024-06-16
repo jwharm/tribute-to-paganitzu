@@ -26,7 +26,6 @@ import java.util.List;
 /**
  * Paganitzu levels are called rooms. Each room is a grid of 12 rows and 16
  * columns. This class provides access to the tiles in a specific room.
- *
  */
 public final class Room implements Serializable {
 

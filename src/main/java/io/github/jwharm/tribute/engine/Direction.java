@@ -19,6 +19,9 @@
 
 package io.github.jwharm.tribute.engine;
 
+/**
+ * Represents a direction in the room
+ */
 public enum Direction {
     // in clockwise order:
     LEFT,
