@@ -12,7 +12,7 @@ Currently you'll need to clone the GitHub repository (or download the contents a
 
 The game engine consists of four packages: `engine`, `ui`, `io` and `transitions`. The `engine` package contains the core gameplay functionality. The `GameSession` class represents the current gameplay session, with the current level (room) in a `Room` object. A `Room` is basically a grid of tiles that is continuously updated during gameplay. Besides the room, some global game-state variables (lives, score, keys) are kept in the `GameState` class. Every 100 milliseconds, the `GameSession.updateState()` method is run. When a cursor key was pressed, it will update the player location. It then draws the images of passive tiles, and runs all transitions.
 
-## Rooms, tiles and transitions
+### Rooms, tiles and transitions
 
 Each room in Paganitzu is a 16x12 grid of tiles. A tile can either be passive (not moving or reacting) or active (moving around, showing an animated effect, or waiting for an event to happen). While playing the game, the tiles are updated: spiders move around, keys are collected, walls disappear, spiders are watching the player, etcetera. This is all implemented with "transitions". A transition updates an active tile based on the current game state. Examples are:
 
