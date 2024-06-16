@@ -10,7 +10,7 @@ Currently you'll need to clone the GitHub repository (or download the contents a
 
 ## Game engine design
 
-The game engine consists of four packages: `engine`, `ui`, `io` and `transitions`. The `engine` package contains the core gameplay functionality. The `Game` class represents a gameplay session, with the current level (room) in a `Room` object. A `Room` is basically a grid of tiles that is continuously updated during gameplay. Besides the room, some global game-state variables (lives, score, keys) are kept in the `GameState` class. Every 100 milliseconds, the `Game.updateState()` method is run. When a cursor key was pressed, it will update the player location. It then draws the images of passive tiles, and runs all transitions.
+The game engine consists of four packages: `engine`, `ui`, `io` and `transitions`. The `engine` package contains the core gameplay functionality. The `GameSession` class represents the current gameplay session, with the current level (room) in a `Room` object. A `Room` is basically a grid of tiles that is continuously updated during gameplay. Besides the room, some global game-state variables (lives, score, keys) are kept in the `GameState` class. Every 100 milliseconds, the `GameSession.updateState()` method is run. When a cursor key was pressed, it will update the player location. It then draws the images of passive tiles, and runs all transitions.
 
 ## Rooms, tiles and transitions
 
@@ -29,7 +29,7 @@ A number of images share a common `Animation` base class. An animation is simply
 
 All transitions are waiting on a queue, and every gameplay iteration (10 times per second), they are processed. Most transitions will return a `CONTINUE` result, and are enqueued again. A transition that is completely finished will return `DONE` and not enqueued anymore. Some transitions (like the `WaterFlow` animation) will continue forever and never finish.
 
-Many transitions are triggered by very specific events. Some are only applicable in certain rooms. This is hard-coded in the method `Game.scheduleTransitions()`.
+Many transitions are triggered by very specific events. Some are only applicable in certain rooms. This is hard-coded in the method `GameSession.scheduleTransitions()`.
 
 ### Drawing the screen
 
@@ -37,7 +37,7 @@ All graphics are read from the original Paganitzu shareware game data file `PAGA
 
 The room layout is read from the file `PAGA1.007` in the `LevelReader` class. The file contains the exact layout of the 20 rooms; every tile has a number that corresponds to its type (a wall, spider, empty space, key, ...). Many types of tile have multiple variants: for example, there are 4 types of spider, depending of the direction they are expected to move. The tiles are loaded into a `Room` object that represent the level in its initial state. The tiles have a state (passive or active) and an image to display.
 
-The core gameplay loop in the `Game.updateState()` method iterates through the tiles and draws the images. It then runs all transitions; most transitions will also draw one or more image. The loop runs 10 times per second (10 FPS).
+The core gameplay loop in the `GameSession.updateState()` method iterates through the tiles and draws the images. It then runs all transitions; most transitions will also draw one or more image. The loop runs 10 times per second (10 FPS).
 
 The actual drawing is done with the Cairo graphics library. Cairo uses a `Context` class that can execute drawing commands like drawing lines, displaying an image, transforming images, etcetera.  All drawing operations in the game are executed in `DrawCommand` actions that perform an operation on a Cairo `Context`.
 
@@ -47,7 +47,7 @@ The user interface is created with Gtk and LibAdwaita. The `GameApplication` cla
 
 ### Saving and loading
 
-To keep things simple, there is one "savegame slot". Saving the game is implemented using standard Java object serialization. The current `Game` instance is serialized with `ObjectOutputStream.writeObject()` into a `DeflaterOutputStream`, which then writes to a `FileOutputStream`. The reverse is done for loading a savegame. In this way, the entire saving and loading functionality was implemented in just a few lines of code.
+To keep things simple, there is one "savegame slot". Saving the game is implemented using standard Java object serialization. The current `GameSession` instance is serialized with `ObjectOutputStream.writeObject()` into a `DeflaterOutputStream`, which then writes to a `FileOutputStream`. The reverse is done for loading a savegame. In this way, the entire saving and loading functionality was implemented in just a few lines of code.
 
 ### Downloading game assets
 
