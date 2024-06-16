@@ -42,7 +42,7 @@ tasks.named('classes') {
 
 tasks.named('run', JavaExec) {
     jvmArgs += '--enable-native-access=ALL-UNNAMED'
-    jvmArgs += "-Djava.library.path=/usr/lib64:/lib64:/lib:/usr/lib:/lib/x86_64-linux-gnu"
+    jvmArgs += "-Djava.library.path=C:/dev/msys64/mingw64/bin"
 }
 
 application {
