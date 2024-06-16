@@ -2,6 +2,8 @@
 
 **Tribute to Paganitzu** is an open-source, Java-based reimplementation of the shareware episode of the classic Apogee game "Paganitzu" created by Keith Schuler in 1991 and published by [Apogee](https://legacy.3drealms.com/paganitzu/). *Tribute* started out as a small tech demo for the [Java-GI](https://jwharm.github.io/java-gi) and [Cairo language bindings](https://github.com/jwharm/cairo-java-bindings), but I gradually added all features necessary to play the entire Paganitzu shareware game.
 
+![Screenshot](images/screenshot.png)
+
 Technically, *Tribute* is just a game engine and not a full game: the data files from the Paganitzu shareware episode are used for the levels and graphics. The game has been built with Java and the open-source, cross-platform UI libraries Gtk4, LibAdwaita and Cairo.
 
 ## Installation
