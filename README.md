@@ -25,7 +25,7 @@ Each room in Paganitzu is a 16x12 grid of tiles. A tile can either be passive (n
 * DoorLocked: verifies if there are any keys left in the room. If not, the door is unlocked.
 * GemSparkle: a randomly triggered transition that will draw a "sparkle" animation on a gem.
 
-A number of images share a common `Animation` base class. An animation is simply a list of images that is displayed sequentially.
+A number of transitions share a common `Animation` base class. An animation is simply a list of images that is displayed sequentially.
 
 All transitions are waiting on a queue, and every gameplay iteration (10 times per second), they are processed. Most transitions will return a `CONTINUE` result, and are enqueued again. A transition that is completely finished will return `DONE` and not enqueued anymore. Some transitions (like the `WaterFlow` animation) will continue forever and never finish.
 
