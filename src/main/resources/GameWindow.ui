@@ -3,7 +3,7 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="Adw" version="1.0"/>
   <template class="GameWindow" parent="AdwApplicationWindow">
-    <property name="title">Puzzle game</property>
+    <property name="title">Tribute to Paganitzu</property>
     <property name="default-width">580</property>
     <property name="default-height">480</property>
     <child>
@@ -71,7 +71,7 @@
         <attribute name="action">win.pause</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">_Restart level</attribute>
+        <attribute name="label" translatable="yes">_Restart room</attribute>
         <attribute name="action">win.restart</attribute>
       </item>
     </section>
@@ -83,6 +83,10 @@
       <item>
         <attribute name="label" translatable="yes">_Load game</attribute>
         <attribute name="action">win.load</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_About</attribute>
+        <attribute name="action">win.about</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">_Quit</attribute>

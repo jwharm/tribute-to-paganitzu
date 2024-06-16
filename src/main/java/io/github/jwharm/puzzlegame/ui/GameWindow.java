@@ -1,7 +1,6 @@
 package io.github.jwharm.puzzlegame.ui;
 
 import io.github.jwharm.javagi.base.GErrorException;
-import io.github.jwharm.javagi.base.Out;
 import io.github.jwharm.javagi.gobject.annotations.InstanceInit;
 import io.github.jwharm.javagi.gtk.types.Types;
 import io.github.jwharm.javagi.gtk.annotations.GtkChild;
@@ -14,7 +13,6 @@ import io.github.jwharm.puzzlegame.transitions.LoadRoom;
 import org.gnome.adw.*;
 import org.gnome.adw.Application;
 import org.gnome.adw.ApplicationWindow;
-import org.gnome.adw.HeaderBar;
 import org.gnome.adw.MessageDialog;
 import org.gnome.gdk.Gdk;
 import org.gnome.gio.SimpleAction;
@@ -37,14 +35,13 @@ import java.util.zip.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.gnome.glib.GLib.SOURCE_CONTINUE;
 
-@GtkTemplate(name="GameWindow", ui="/io/github/jwharm/puzzlegame/window.ui")
+@GtkTemplate(name="GameWindow", ui="/io/github/jwharm/puzzlegame/GameWindow.ui")
 public class GameWindow extends ApplicationWindow {
 
     private static final int FPS = 10;
 
     private static final Type gtype = Types.register(GameWindow.class);
 
-    @GtkChild public HeaderBar headerBar;
     @GtkChild public Label levelLabel;
     @GtkChild public Label livesLabel;
     @GtkChild public Label scoreLabel;
@@ -112,8 +109,13 @@ public class GameWindow extends ApplicationWindow {
         pauseAction.setEnabled(false);
         addAction(pauseAction);
 
+        var aboutAction = new SimpleAction("about", null);
+        aboutAction.onActivate(_ -> about());
+        aboutAction.setEnabled(true);
+        addAction(aboutAction);
+
         // Create the Toast that is displayed when the game is paused
-        this.pauseMessage = Toast.builder()
+        pauseMessage = Toast.builder()
                 .setTitle("Game paused")
                 .setActionName("win.pause")
                 .setButtonLabel("Resume")
@@ -121,24 +123,15 @@ public class GameWindow extends ApplicationWindow {
                 .build();
 
         // Create the GamePaintable widget
-        this.paintable = GamePaintable.create();
+        paintable = GamePaintable.create();
         picture.setPaintable(paintable);
-
-        // Try to lock aspect ratio. (Wayland seems to ignore this.)
-        this.onNotify("default-height", _ -> {
-            int hbHeight = headerBar.getHeight();
-            if (hbHeight == 0) hbHeight = 47;
-            Out<Integer> w = new Out<>();
-            this.getDefaultSize(w, null);
-            this.setDefaultSize(w.get(), ((int) (w.get() * 0.75)) + hbHeight);
-        });
 
         // If the game files are downloaded and cached, proceed to the game.
         if (isCached())
             initGame();
     }
 
-    public void pauseOrResume(SimpleAction pauseAction) {
+    private void pauseOrResume(SimpleAction pauseAction) {
         if (game().paused()) {
             game().resume();
             pauseMessage.dismiss();
@@ -149,7 +142,7 @@ public class GameWindow extends ApplicationWindow {
         pauseAction.setState(Variant.boolean_(game().paused()));
     }
 
-    public void restart() {
+    private void restart() {
         AlertDialog alert = AlertDialog.builder()
                 .setModal(true)
                 .setMessage("Restart room")
@@ -173,10 +166,10 @@ public class GameWindow extends ApplicationWindow {
         });
     }
 
-    public void save() {
+    private void save() {
         Game game = game();
         game.pause();
-        try (var fos = new FileOutputStream("savegame.dat");
+        try (var fos = new FileOutputStream(getSaveGameFileName().toFile());
              var zos = new DeflaterOutputStream(fos);
              var oos = new ObjectOutputStream(zos)) {
             oos.writeObject(game);
@@ -191,8 +184,8 @@ public class GameWindow extends ApplicationWindow {
         game.resume();
     }
 
-    public void load() {
-        try (var fis = new FileInputStream("savegame.dat");
+    private void load() {
+        try (var fis = new FileInputStream(getSaveGameFileName().toFile());
              var zis = new InflaterInputStream(fis);
              var ois = new ObjectInputStream(zis)) {
             Game game = (Game) ois.readObject();
@@ -206,6 +199,33 @@ public class GameWindow extends ApplicationWindow {
         }
     }
 
+    private void about() {
+        var aboutWindow = AboutWindow.builder()
+                .setApplicationName("Tribute to Paganitzu")
+                .setVersion("1.0.0")
+                .setCopyright("© 2024 Jan-Willem Harmannij")
+                .setLicenseType(License.GPL_3_0)
+                .setIssueUrl("https://github.com/jwharm/puzzlegame/issues")
+                .build();
+        aboutWindow.addLegalSection(
+                "Paganitzu shareware game data files",
+                "© 1991 by Trilobyte",
+                License.CUSTOM,
+                "This game uses data files from the shareware episode of the " +
+                "game \"Paganitzu\" created by Keith Schuler and published " +
+                "in 1991 by Apogee Software. Both the shareware episode and " +
+                "the full game are available from 3DRealms."
+        );
+        aboutWindow.present();
+    }
+
+    private Path getSaveGameFileName() throws IOException {
+        String userDataDir = GLib.getUserDataDir();
+        Path path = Path.of(userDataDir, "Tribute to Paganitzu");
+        Files.createDirectories(path);
+        return path.resolve("Saved game");
+    }
+
     private Path getCachedFileName() {
         String userCacheDir = GLib.getUserCacheDir();
         return Path.of(userCacheDir, "PAGA1.zip");
@@ -215,7 +235,7 @@ public class GameWindow extends ApplicationWindow {
         return getCachedFileName().toFile().exists();
     }
 
-    public void download() {
+    private void download() {
         try {
             String url = "https://archive.org/download/Paganitzu/PAGA.zip";
             URLConnection connection = URI.create(url).toURL().openConnection();
@@ -308,7 +328,7 @@ public class GameWindow extends ApplicationWindow {
         dialog.present();
     }
 
-    public boolean keyPressed(int keyVal) {
+    private boolean keyPressed(int keyVal) {
         if (game() == null)
             return Gdk.EVENT_PROPAGATE;
 
@@ -322,7 +342,7 @@ public class GameWindow extends ApplicationWindow {
         return Gdk.EVENT_STOP;
     }
 
-    public void keyReleased(int keyVal) {
+    private void keyReleased(int keyVal) {
         if (game() == null)
             return;
 
