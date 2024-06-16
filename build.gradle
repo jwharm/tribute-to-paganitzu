@@ -3,7 +3,7 @@ plugins {
     id 'idea'
 }
 
-group = 'io.github.jwharm.puzzlegame'
+group = 'io.github.jwharm.tribute'
 version = '0.1'
 
 repositories {
@@ -17,7 +17,7 @@ idea {
 }
 
 dependencies {
-    implementation 'io.github.jwharm.javagi:adw:0.10.0'
+    implementation 'io.github.jwharm.javagi:adw:0.10.1'
     implementation 'io.github.jwharm.cairobindings:cairo:1.18.3'
 }
 
@@ -42,9 +42,8 @@ tasks.named('classes') {
 
 tasks.named('run', JavaExec) {
     jvmArgs += '--enable-native-access=ALL-UNNAMED'
-    jvmArgs += "-Djava.library.path=C:/dev/msys64/mingw64/bin"
 }
 
 application {
-    mainClass = 'io.github.jwharm.puzzlegame.Main'
+    mainClass = 'io.github.jwharm.tribute.Main'
 }
