@@ -114,13 +114,16 @@ public final class Room implements Serializable {
     }
 
     /**
-     * Debug logging
+     * Room represented as a grid of tile IDs
      */
-    public void printToStdOut() {
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
         for (Tile[] row : tiles) {
             for (Tile tile : row)
-                System.out.printf("%02d ", tile.id());
-            System.out.println();
+                builder.append(String.format("%02d ", tile.id()));
+            builder.append(System.lineSeparator());
         }
+        return builder.toString();
     }
 }

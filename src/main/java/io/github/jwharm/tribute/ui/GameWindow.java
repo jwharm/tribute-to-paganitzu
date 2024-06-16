@@ -342,7 +342,6 @@ public class GameWindow extends ApplicationWindow {
         try {
             ArchiveReader reader = new ArchiveReader();
             String path = getCachedFileName().toString();
-            System.out.println(path);
             var map = reader.extractGameAssets(path);
 
             ImageCache.init(map.get("PAGA1.012"));

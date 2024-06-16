@@ -83,7 +83,6 @@ public class GameSession implements Serializable {
     public void load() {
         this.room = LevelReader.get(state().room());
         this.moveDirection = null;
-        room.printToStdOut();
     }
 
     /**
