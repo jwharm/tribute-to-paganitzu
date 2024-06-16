@@ -32,6 +32,16 @@ public class Messages {
             "that contains the Paganitzu shareware episode 1 installation " +
             "files.";
 
+    public static final String COPYRIGHT =
+            "This game uses data files from the shareware episode of the " +
+            "game \"Paganitzu\" created by Keith Schuler and published " +
+            "in 1991 by Apogee Software. Both the shareware episode and " +
+            "the full game are available from 3DRealms.";
+
+    public static final String CREDITS =
+            "The Paganitzu graphics file format was reverse engineered by " +
+            "user K1n9_Duk3 of the \"DOS Game Modding Wiki\" website.";
+
     public static final String PLAYER_DIED =
             "Press enter to continue";
 

@@ -276,13 +276,10 @@ public class GameWindow extends ApplicationWindow {
                 "Paganitzu shareware game data files",
                 "© 1991 by Trilobyte",
                 License.CUSTOM,
-                "This game uses data files from the shareware episode of the " +
-                "game \"Paganitzu\" created by Keith Schuler and published " +
-                "in 1991 by Apogee Software. Both the shareware episode and " +
-                "the full game are available from 3DRealms.");
+                Messages.COPYRIGHT);
         aboutWindow.addCreditSection(
                 "DOS Game Modding Wiki",
-                new String[] {"User K1n9_Duk3"});
+                new String[] {Messages.CREDITS});
         aboutWindow.present();
     }
 
