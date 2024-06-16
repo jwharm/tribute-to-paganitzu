@@ -45,7 +45,7 @@ public class BoulderSplash implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         progress += 0.5f;
         if (progress < 1) {
             game.room().remove(boulder);

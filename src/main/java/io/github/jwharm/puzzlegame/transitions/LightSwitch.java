@@ -19,7 +19,7 @@
 
 package io.github.jwharm.puzzlegame.transitions;
 
-import io.github.jwharm.puzzlegame.engine.Game;
+import io.github.jwharm.puzzlegame.engine.GameSession;
 import io.github.jwharm.puzzlegame.engine.Image;
 import io.github.jwharm.puzzlegame.engine.Result;
 import io.github.jwharm.puzzlegame.engine.Transition;
@@ -41,7 +41,7 @@ public class LightSwitch implements Transition {
     private boolean messageDisplayed = false;
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         if (!messageDisplayed) {
             game.state().showMessage(Messages.LIGHT_SWITCH_FOUND);
             messageDisplayed = true;

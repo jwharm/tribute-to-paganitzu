@@ -43,7 +43,7 @@ public class WallMove implements Transition {
     private float progress = 0;
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         var m = moves[currentMove];
 
         // When the transition starts
@@ -86,7 +86,7 @@ public class WallMove implements Transition {
         }
     }
 
-    private void doMove(Game game, Position src, Position dest) {
+    private void doMove(GameSession game, Position src, Position dest) {
         game.room().remove(game.room().get(dest));
         game.room().swap(game.room().get(src), game.room().get(dest));
         game.draw(dest, game.room().get(dest).image());

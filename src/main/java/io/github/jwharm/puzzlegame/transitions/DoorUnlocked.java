@@ -39,7 +39,7 @@ public class DoorUnlocked implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         door.draw(game);
 
         if (status++ == 0)

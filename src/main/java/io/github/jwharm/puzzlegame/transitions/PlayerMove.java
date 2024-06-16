@@ -51,7 +51,7 @@ public class PlayerMove implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         progress += 0.5f;
         Position current = new Position(player.row(), player.col());
         if (progress < 1) {

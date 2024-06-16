@@ -34,7 +34,7 @@ public class SpikeGuard implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         Tile player = game.room().player();
         if (player == null)
             return Result.CONTINUE;

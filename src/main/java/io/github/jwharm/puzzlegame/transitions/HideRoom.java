@@ -52,7 +52,7 @@ public class HideRoom implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         /*
          * Increasingly draw more blue squares. The transition is complete
          * when all tiles are blue, meaning the `current` points to the last

@@ -82,7 +82,7 @@ public sealed class Tile implements Serializable permits Player {
         return image;
     }
 
-    public void draw(Game game) {
+    public void draw(GameSession game) {
         game.draw(row, col, image);
     }
 

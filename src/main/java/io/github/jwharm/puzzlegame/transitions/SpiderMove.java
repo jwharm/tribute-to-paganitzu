@@ -65,7 +65,7 @@ public class SpiderMove implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         if (game.frozen())
             return Result.CONTINUE;
 
@@ -95,7 +95,7 @@ public class SpiderMove implements Transition {
     }
 
     // Check if the spider is near the player, and trigger the `Die` transition
-    private boolean bite(Game game) {
+    private boolean bite(GameSession game) {
         Tile player = game.room().player();
         if (player != null && spider.position().borders(player.position())) {
             game.freeze();
@@ -107,7 +107,7 @@ public class SpiderMove implements Transition {
     }
 
     // Remove the spider and spawn gems on and around its position
-    private void explode(Game game) {
+    private void explode(GameSession game) {
         game.schedule(new Spawn(spider, Tile.createGem()));
         // Spawn gems in all four directions: up, down, left and right
         for (var direction : Direction.values()) {

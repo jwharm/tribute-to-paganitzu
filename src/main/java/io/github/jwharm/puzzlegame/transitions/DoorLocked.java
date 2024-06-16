@@ -38,7 +38,7 @@ public class DoorLocked implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         // Check if all keys have been collected
         for (var key : keys)
             if (key.state() != TileState.REMOVED)

@@ -19,7 +19,7 @@
 
 package io.github.jwharm.puzzlegame.transitions;
 
-import io.github.jwharm.puzzlegame.engine.Game;
+import io.github.jwharm.puzzlegame.engine.GameSession;
 import io.github.jwharm.puzzlegame.engine.Result;
 import io.github.jwharm.puzzlegame.engine.Transition;
 
@@ -53,7 +53,7 @@ public class LoadRoom implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         if (transition == null) {
             /*
              * When initially starting the game, there is no existing room to

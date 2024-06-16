@@ -36,7 +36,7 @@ public class Warp implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         game.freeze();
 
         Result result = spawn.run(game);

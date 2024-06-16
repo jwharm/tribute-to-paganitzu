@@ -78,7 +78,7 @@ public class EventQueue implements Serializable {
      * transition returns {@link Result#CONTINUE} it is enqueued again, to be
      * run in the next frame.
      */
-    public void runTransitions(int when, Game game) {
+    public void runTransitions(int when, GameSession game) {
         while (!transitions.isEmpty() && transitions.peek().when() <= when) {
             var transition = transitions.poll().transition();
             if (transition.run(game) == Result.CONTINUE)

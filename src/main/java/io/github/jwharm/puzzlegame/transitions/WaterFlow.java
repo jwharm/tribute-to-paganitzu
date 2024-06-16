@@ -51,7 +51,7 @@ public class WaterFlow implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         if (tile1.state() == REMOVED || tile2.state() == REMOVED)
             return Result.DONE;
 

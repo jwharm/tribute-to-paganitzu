@@ -21,7 +21,7 @@ package io.github.jwharm.puzzlegame.ui;
 
 import io.github.jwharm.javagi.gobject.types.Types;
 import io.github.jwharm.puzzlegame.engine.Room;
-import io.github.jwharm.puzzlegame.engine.Game;
+import io.github.jwharm.puzzlegame.engine.GameSession;
 import org.freedesktop.cairo.Context;
 import org.gnome.gdk.Paintable;
 import org.gnome.gdk.PaintableFlags;
@@ -38,7 +38,7 @@ public class GamePaintable extends GObject implements Paintable {
 
     public static final int TILE_SIZE = 16;
     private static final Type gtype = Types.register(GamePaintable.class);
-    private Game game;
+    private GameSession game;
 
     public static Type getType() {
         return gtype;
@@ -91,11 +91,11 @@ public class GamePaintable extends GObject implements Paintable {
         return Set.of(PaintableFlags.SIZE); // The image size will never change
     }
 
-    public void setGame(Game game) {
+    public void setGame(GameSession game) {
         this.game = game;
     }
 
-    public Game game() {
+    public GameSession game() {
         return this.game;
     }
 

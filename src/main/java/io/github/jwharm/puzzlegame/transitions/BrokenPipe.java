@@ -27,7 +27,7 @@ import io.github.jwharm.puzzlegame.engine.*;
 public class BrokenPipe implements Transition {
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         var room = game.room();
 
         var waterTile = new Tile((short) 35, ActorType.WATER, TileState.PASSIVE, Image.WATER_3_1);

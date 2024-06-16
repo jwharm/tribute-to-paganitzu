@@ -54,7 +54,7 @@ public class Animation implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         // Check if the tile has been removed
         if (tile.state() == TileState.REMOVED)
             return Result.DONE;

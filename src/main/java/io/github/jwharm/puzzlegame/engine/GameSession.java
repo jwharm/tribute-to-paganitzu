@@ -34,7 +34,7 @@ import java.util.*;
 
 import static io.github.jwharm.puzzlegame.ui.GamePaintable.TILE_SIZE;
 
-public class Game implements Serializable {
+public class GameSession implements Serializable {
 
     /*
      * Random number generator used for randomly trigger gem animations
@@ -57,7 +57,7 @@ public class Game implements Serializable {
     // List is transient (not serialized), because it contains lambdas
     private transient List<DrawCommand> drawCommands = new ArrayList<>();
 
-    public Game(GameState state) {
+    public GameSession(GameState state) {
         this.state = state;
         schedule(new LoadRoom(LoadRoom.Action.RESET_ROOM));
     }

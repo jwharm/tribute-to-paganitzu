@@ -36,7 +36,7 @@ public class SpikeExtend implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         Tile target = game.room().get(spike.position().move(Direction.UP));
         Tile bars = new Tile(spike.id(), spike.type(), TileState.PASSIVE, Image.SPIKE_BARS);
         switch (target.type()) {

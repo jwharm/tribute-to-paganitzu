@@ -36,7 +36,7 @@ public class Trigger implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         if (game.room().get(spot).type() == type) {
             game.schedule(event);
             return Result.DONE;

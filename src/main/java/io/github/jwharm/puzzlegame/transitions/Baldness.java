@@ -43,7 +43,7 @@ public class Baldness implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         Player player = game.room().player();
 
         // Apply curse & display message

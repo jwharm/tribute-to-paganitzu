@@ -186,7 +186,7 @@ public class GameWindow extends ApplicationWindow {
     }
 
     private void save() {
-        Game game = game();
+        GameSession game = game();
         game.pause();
         try (var fos = new FileOutputStream(getSaveGameFileName().toFile());
              var zos = new DeflaterOutputStream(fos);
@@ -207,7 +207,7 @@ public class GameWindow extends ApplicationWindow {
         try (var fis = new FileInputStream(getSaveGameFileName().toFile());
              var zis = new InflaterInputStream(fis);
              var ois = new ObjectInputStream(zis)) {
-            Game game = (Game) ois.readObject();
+            GameSession game = (GameSession) ois.readObject();
             paintable.setGame(game);
             game.schedule(new LoadRoom(LoadRoom.Action.NO_ACTION));
             game.freeze();
@@ -296,7 +296,7 @@ public class GameWindow extends ApplicationWindow {
         for (var action : List.of(pauseAction, restartAction, loadAction, saveAction))
             action.setEnabled(true);
 
-        var game = new Game(new GameState(1, 5, 0));
+        var game = new GameSession(new GameState(1, 5, 0));
         paintable.setGame(game);
 
         GLib.timeoutAdd(GLib.PRIORITY_DEFAULT, 1000 / FPS, () -> {
@@ -310,7 +310,7 @@ public class GameWindow extends ApplicationWindow {
      * redraw the screen.
      */
     private void updateAndRedraw() {
-        Game game = game();
+        GameSession game = game();
         if (game != null && !game.paused()) {
             game.updateState();
             if (game.state().message() != null)
@@ -374,7 +374,7 @@ public class GameWindow extends ApplicationWindow {
         }
     }
 
-    public Game game() {
+    public GameSession game() {
         return paintable.game();
     }
 }

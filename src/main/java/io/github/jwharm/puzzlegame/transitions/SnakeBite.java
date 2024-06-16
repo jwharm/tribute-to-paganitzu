@@ -38,7 +38,7 @@ public class SnakeBite implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         // Draw the venomous bolt in the next tile
         col += Integer.signum(player.col() - snake.col());
         game.draw(snake.row(), col, Image.VENOM);

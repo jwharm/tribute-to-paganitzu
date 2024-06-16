@@ -52,7 +52,7 @@ public class RevealRoom implements Transition {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         /*
          * When the transition is complete (0 blue squares left on-screen),
          * resume the game and start the usual transitions.

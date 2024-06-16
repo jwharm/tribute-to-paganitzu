@@ -46,7 +46,7 @@ public class DropHat extends Animation {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         Result result = super.run(game);
         if (result == Result.DONE) {
             Tile hat = new Tile((short) 0, ActorType.HAT, TileState.PASSIVE, FALLING_HAT_4);

@@ -46,7 +46,7 @@ public class Spawn extends Animation {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         Result result = super.run(game);
 
         if (result == Result.DONE) {

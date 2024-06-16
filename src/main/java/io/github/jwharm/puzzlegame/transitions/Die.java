@@ -40,7 +40,7 @@ public class Die extends Animation {
     }
 
     @Override
-    public Result run(Game game) {
+    public Result run(GameSession game) {
         // Run the animation
         var result = super.run(game);
 
