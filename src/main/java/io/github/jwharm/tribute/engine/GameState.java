@@ -32,8 +32,12 @@ import java.io.Serializable;
 public class GameState implements Serializable {
 
     private static final int START_BONUS = 300;
+    private static final int KEY_BONUS = 10;
+    private static final int GEM_BONUS = 50;
     private static final int REWARD_BONUS = 200;
-    private int room, lives, score, startScore, bonus;
+    private static final int REWARD_LIFE = 5000;
+    private static final int NUM_ROOMS = 20;
+    private int room, lives, score, startScore, bonus, nextLifeThreshold;
     private boolean dark;
     private String message;
 
@@ -45,6 +49,11 @@ public class GameState implements Serializable {
         this.bonus = START_BONUS;
         this.dark = (room == 17);
         this.message = null;
+
+        // Set the score threshold to add an extra life
+        nextLifeThreshold = REWARD_LIFE;
+        while (nextLifeThreshold < score)
+            nextLifeThreshold += REWARD_LIFE;
     }
 
     public void reset() {
@@ -54,22 +63,37 @@ public class GameState implements Serializable {
     }
 
     public void die() {
-        if (lives > 0)
-            lives--;
+        lives--;
+
+        if (lives < 0) {
+            message = "Game over.";
+            room = 1;
+            score = 0;
+            startScore = 0;
+            bonus = START_BONUS;
+        }
+    }
+
+    private void addScore(int increase) {
+        score += increase;
+        while (score >= nextLifeThreshold) {
+            lives++;
+            nextLifeThreshold += REWARD_LIFE;
+        }
     }
 
     public void roomCompleted() {
-        score += bonus;
+        addScore(bonus);
         startScore = score;
-        room++;
+        room = (room + 1) % NUM_ROOMS;
     }
 
     public void keyCollected() {
-        score += 10;
+        addScore(KEY_BONUS);
     }
 
     public void gemCollected() {
-        score += 50;
+        addScore(GEM_BONUS);
     }
 
     public void decreaseBonus() {
@@ -78,7 +102,7 @@ public class GameState implements Serializable {
     }
 
     public void addBonusReward() {
-        score += REWARD_BONUS;
+        addScore(REWARD_BONUS);
     }
 
     public void showMessage(String message) {
