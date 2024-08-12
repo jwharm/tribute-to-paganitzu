@@ -70,10 +70,10 @@ public class GameWindow extends ApplicationWindow {
 
     private static final Type gtype = Types.register(GameWindow.class);
 
-    @GtkChild public Label levelLabel;
-    @GtkChild public Label livesLabel;
-    @GtkChild public Label scoreLabel;
-    @GtkChild public Label bonusLabel;
+    @GtkChild public Inscription levelLabel;
+    @GtkChild public Inscription livesLabel;
+    @GtkChild public Inscription scoreLabel;
+    @GtkChild public Inscription bonusLabel;
     @GtkChild public Entry urlEntry;
     @GtkChild public Stack stack;
     @GtkChild public ToastOverlay toastOverlay;
@@ -288,9 +288,9 @@ public class GameWindow extends ApplicationWindow {
      */
     private Path getSaveGameFileName() throws IOException {
         String userDataDir = GLib.getUserDataDir();
-        Path path = Path.of(userDataDir, "Tribute to Paganitzu");
+        Path path = Path.of(userDataDir, "tribute-to-paganitzu");
         Files.createDirectories(path);
-        return path.resolve("Saved game");
+        return path.resolve("savegame");
     }
 
     /*
@@ -394,10 +394,10 @@ public class GameWindow extends ApplicationWindow {
 
     private void updateHeaderBar() {
         if (game() != null) {
-            levelLabel.setLabel("Room: " + game().state().room());
-            livesLabel.setLabel("Lives: " + game().state().lives());
-            scoreLabel.setLabel("Score: " + game().state().score());
-            bonusLabel.setLabel("Bonus: " + game().state().bonus());
+            levelLabel.setText("Room: " + game().state().room());
+            livesLabel.setText("Lives: " + game().state().lives());
+            scoreLabel.setText("Score: " + game().state().score());
+            bonusLabel.setText("Bonus: " + game().state().bonus());
         }
     }
 

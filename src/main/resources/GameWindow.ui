@@ -11,18 +11,25 @@
         <property name="orientation">vertical</property>
         <child>
           <object class="AdwHeaderBar" id="headerBar">
-            <property name="show-title">false</property>
             <child type="start">
-              <object class="GtkLabel" id="levelLabel"/>
+              <object class="GtkInscription" id="levelLabel">
+                <property name="nat-chars">6</property>
+              </object>
             </child>
             <child type="start">
-              <object class="GtkLabel" id="livesLabel"/>
+              <object class="GtkInscription" id="livesLabel">
+                <property name="nat-chars">6</property>
+              </object>
             </child>
             <child type="start">
-              <object class="GtkLabel" id="scoreLabel"/>
+              <object class="GtkInscription" id="scoreLabel">
+                <property name="nat-chars">9</property>
+              </object>
             </child>
             <child type="start">
-              <object class="GtkLabel" id="bonusLabel"/>
+              <object class="GtkInscription" id="bonusLabel">
+                <property name="nat-chars">9</property>
+              </object>
             </child>
             <child type="end">
               <object class="GtkMenuButton">
