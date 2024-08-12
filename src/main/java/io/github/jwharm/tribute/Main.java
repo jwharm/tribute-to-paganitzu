@@ -21,14 +21,22 @@ package io.github.jwharm.tribute;
 
 import io.github.jwharm.tribute.ui.GameApplication;
 import org.gnome.gio.Resource;
+import org.gnome.glib.Bytes;
+
+import java.util.Objects;
 
 /**
  * Entry point for the application.
  */
 public class Main {
+
     public static void main(String[] args) throws Exception {
-        Resource resource = Resource.load("src/main/resources/game.gresource");
-        resource.resourcesRegister();
+        try (var stream = Main.class.getResourceAsStream("/game.gresource")) {
+            Objects.requireNonNull(stream);
+            byte[] bytes = stream.readAllBytes();
+            Resource resource = Resource.fromData(Bytes.static_(bytes));
+            resource.resourcesRegister();
+        }
 
         var app = GameApplication.create();
         app.run(args);
