@@ -10,7 +10,7 @@ Technically, *Tribute* is just a game engine and not a full game: the data files
 
 Download the [zip file](https://github.com/jwharm/tribute-to-paganitzu/releases/download/0.1/tribute-to-paganitzu-0.1.zip) and run the executable in the `bin` folder.
 
-If you have Java installed, clone the GitHub repository (or download the contents as a zip archive) and execute `./gradlew run`.
+Alternatively, clone the GitHub repository (or download the contents as a zip archive) and execute `./gradlew run` to run the game.
 
 ## Game engine design
 
