@@ -267,7 +267,7 @@ public class GameWindow extends ApplicationWindow {
     private void about() {
         var aboutWindow = AboutWindow.builder()
                 .setApplicationName("Tribute to Paganitzu")
-                .setVersion("1.0.0")
+                .setVersion("0.1")
                 .setCopyright("© 2024 Jan-Willem Harmannij")
                 .setLicenseType(License.GPL_3_0)
                 .setIssueUrl("https://github.com/jwharm/puzzlegame/issues")
