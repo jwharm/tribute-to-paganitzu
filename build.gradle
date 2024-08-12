@@ -1,6 +1,5 @@
 plugins {
     id 'application'
-    id 'idea'
     id 'org.beryx.jlink' version '3.0.1'
 }
 
@@ -9,12 +8,6 @@ version = '0.1'
 
 repositories {
     mavenCentral()
-}
-
-idea {
-    module {
-        downloadSources = true
-    }
 }
 
 dependencies {
@@ -61,7 +54,6 @@ jlink {
             '--strip-debug',
             '--no-header-files',
             '--no-man-pages',
-            '--verbose'
     ]
     launcher {
         name = 'Tribute to Paganitzu'
