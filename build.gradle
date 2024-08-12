@@ -1,6 +1,7 @@
 plugins {
     id 'application'
     id 'idea'
+    id 'org.beryx.jlink' version '3.0.1'
 }
 
 group = 'io.github.jwharm.tribute'
@@ -17,8 +18,8 @@ idea {
 }
 
 dependencies {
-    implementation 'io.github.jwharm.javagi:adw:0.10.1'
-    implementation 'io.github.jwharm.cairobindings:cairo:1.18.3'
+    implementation 'io.github.jwharm.javagi:adw:0.10.2'
+    implementation 'io.github.jwharm.cairobindings:cairo:1.18.4'
 }
 
 java {
@@ -40,10 +41,29 @@ tasks.named('classes') {
     dependsOn glibCompileResources
 }
 
-tasks.named('run', JavaExec) {
-    jvmArgs += '--enable-native-access=ALL-UNNAMED'
-}
-
 application {
     mainClass = 'io.github.jwharm.tribute.Main'
+    mainModule = 'io.github.jwharm.tribute'
+    applicationDefaultJvmArgs = [
+            '--enable-native-access=org.gnome.glib',
+            '--enable-native-access=org.gnome.gobject',
+            '--enable-native-access=org.gnome.gio',
+            '--enable-native-access=org.gnome.gdk',
+            '--enable-native-access=org.gnome.gtk',
+            '--enable-native-access=org.gnome.adw',
+            '--enable-native-access=org.freedesktop.cairo',
+            '--enable-native-access=io.github.jwharm.tribute'
+    ]
+}
+
+jlink {
+    options = [
+            '--strip-debug',
+            '--no-header-files',
+            '--no-man-pages',
+            '--verbose'
+    ]
+    launcher {
+        name = 'Tribute to Paganitzu'
+    }
 }
